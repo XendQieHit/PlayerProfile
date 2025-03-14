@@ -1,0 +1,29 @@
+name: PlayerProfile
+version: '1.0-SNAPSHOT'
+main: org.mcxqh.playerProfile.PlayerProfile
+api-version: '1.21'
+permissions:
+  mcxqh.profile.common:
+    description: For common player, applied in basic commands which is used frequently.
+    default: true
+  mcxqh.profile.op:
+    description: For Server Administrator, applied in basic command which is used to view and modify player's profile.
+    default: op
+commands:
+  profile:
+    description: For common player, view their profile and status.
+    permission: mcxqh.profile.common
+    usage: /<command>
+  profile config:
+    description: For Server Administrator, modify this plugin's config.
+    permission: mcxqh.profile.op
+    permission-message: No permission.
+    usage: /<command> <element> <value>
+  status:
+    description: Set and view player's status.
+    permission: mcxqh.profile.common
+    usage: /<command> or /<command> <list|set|custom|toggle>
+  titles:
+    description: Set and view player's title.
+    permission: mcxqh.profile.common
+    usage: /<command> or /<command> <list|set|add|hide>

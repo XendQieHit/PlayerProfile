@@ -1,0 +1,23 @@
+tp:
+  toggle-enable: true
+
+  # TP limit of chance
+  time-limit:
+    period: daily
+    times: 3
+
+status:
+  enable-custom: true
+
+title:
+  toggle-enable: true
+
+  # Display player's title on broadcast when he has just afk.
+  display-on-broadcast: true
+
+  # Enable all player add and modify their title by themselves
+  enable-modify-by-self: true
+
+  # 0 -> [Title]<PlayerName> ChatMessage
+  # 1 -> [Title] PlayerName: ChatMessage
+  chat-style: 1
