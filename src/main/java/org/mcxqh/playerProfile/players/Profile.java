@@ -56,6 +56,27 @@ public class Profile {
     }
 
     /**
+     * Gets the player's unique id.
+     *
+     * @return the player's unique id, or <code>null</code> if not available
+     */
+    public UUID getUniqueId() {
+        return uniqueId;
+    }
+    /**
+     * Gets the player name.
+     *
+     * @return the player name, or <code>null</code> if not available
+     */
+    public String getName() {
+        return name;
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    /**
      * Get BaseComponent, which compose of title, raw player name.
      * This value is usually used to send message。
      * @return BaseComponent[]
@@ -136,30 +157,14 @@ public class Profile {
         this.loadTitle();
     }
 
+    /**
+     * Load player's title within json file of title.
+     */
     public void loadTitle() {
-        FileHandler fileHandler = new FileHandler();
         JsonArray jsonArray = null;
 
         // Firstly, read json file.
-        for (int attempt = 0; attempt < 2; attempt++) {
-            try {
-                jsonArray = fileHandler.getTitle(this.player);
-            } catch (FileNotFoundException e) {
-                try {
-                    fileHandler.createTitle(this.player);
-                } catch (IOException ex) {
-                    sendErrorMsg(e, ex);
-                    throw new RuntimeException(ex);
-                }
-            } catch (NullPointerException e) {
-                try {
-                    fileHandler.resetTitle(this.player);
-                } catch (IOException ex) {
-                    sendErrorMsg(e, ex);
-                    throw new RuntimeException(ex);
-                }
-            }
-        }
+        jsonArray = getTitleWithTry(jsonArray);
 
         if (jsonArray == null) {
             Logger.getLogger("PlayerProfile").severe("无法获取文件");
@@ -183,10 +188,42 @@ public class Profile {
                 titleArrayList.add(new Title(name, color, description, issuerName, issuerClass));
             } catch (NullPointerException e) {
                 player.spigot().sendMessage(new ComponentBuilder("加载称号失败：" + e).color(net.md_5.bungee.api.ChatColor.RED).create());
+                throw new RuntimeException(e);
             }
         });
     }
+    /**
+     * This method is for <code>loadTitle()</code>.
+     */
+    private JsonArray getTitleWithTry(JsonArray jsonArray) {
+        FileHandler fileHandler = new FileHandler();
+        for (int attempt = 0; attempt < 2; attempt++) {
+            Logger.getLogger("PlayerProfile").info("This is in" + attempt + "try...");
+            try {
+                jsonArray = fileHandler.getTitle(this.player);
+                break;
+            } catch (FileNotFoundException e) {
+                try {
+                    fileHandler.createTitle(this.player);
+                } catch (IOException ex) {
+                    sendErrorMsg(e, ex);
+                    throw new RuntimeException(ex);
+                }
+            } catch (NullPointerException e) {
+                try {
+                    fileHandler.resetTitle(this.player);
+                } catch (IOException ex) {
+                    sendErrorMsg(e, ex);
+                    throw new RuntimeException(ex);
+                }
+            }
+        }
+        return jsonArray;
+    }
 
+    /**
+     * Save player's title in json file
+     */
     public void saveTitle() {
         FileHandler fileHandler = new FileHandler();
         JsonArray jsonArray = new JsonArray();
@@ -194,7 +231,7 @@ public class Profile {
             jsonArray.add(title.toJson());
         });
         try {
-            fileHandler.saveTitle(this.player, jsonArray.getAsJsonObject());
+            fileHandler.saveTitle(this.player, jsonArray.getAsJsonArray());
         } catch (IOException e) {
             this.player.spigot().sendMessage(new ComponentBuilder("保存称号设置失败：" + e).create());
             throw new RuntimeException(e);
@@ -205,26 +242,5 @@ public class Profile {
     private void sendErrorMsg(Exception e, IOException ex) {
         Logger.getLogger("PlayerProfile").severe("读取配置文件失败: " + e);
         this.player.spigot().sendMessage(new ComponentBuilder("读取配置文件失败: " + e).color(net.md_5.bungee.api.ChatColor.RED).create());
-    }
-
-    /**
-     * Gets the player's unique id.
-     *
-     * @return the player's unique id, or <code>null</code> if not available
-     */
-    public UUID getUniqueId() {
-        return uniqueId;
-    }
-    /**
-     * Gets the player name.
-     *
-     * @return the player name, or <code>null</code> if not available
-     */
-    public String getName() {
-        return name;
-    }
-
-    public Player getPlayer() {
-        return player;
     }
 }

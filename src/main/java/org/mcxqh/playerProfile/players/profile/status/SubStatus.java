@@ -74,30 +74,10 @@ public abstract class SubStatus {
      * Load status within json.
      */
     public void loadSetting() {
-        FileHandler fileHandler = new FileHandler();
         String statusName = this.getClass().getSimpleName();
         JsonObject json = null;
         // Firstly, read json file.
-        for (int attempt = 0; attempt < 2; attempt++) {
-            try {
-                json = fileHandler.getStatus(this.player).getAsJsonObject(this.getClass().getSimpleName());
-                break;
-            } catch (FileNotFoundException e) {
-                try {
-                    fileHandler.createStatus(this.player);
-                } catch (IOException ex) {
-                    sendErrorMsg(e, ex);
-                    throw new RuntimeException(ex);
-                }
-            } catch (NullPointerException e) {
-                try {
-                    fileHandler.resetStatus(this.player);
-                } catch (IOException ex) {
-                    sendErrorMsg(e, ex);
-                    throw new RuntimeException(ex);
-                }
-            }
-        }
+        json = getStatusWithTry(json);
 
         if (json == null) {
             Logger.getLogger("PlayerProfile").severe("无法获取文件");
@@ -118,6 +98,33 @@ public abstract class SubStatus {
         } catch (IllegalArgumentException e) {
             this.player.spigot().sendMessage(new ComponentBuilder("加载状态颜色设置失败: "+ this.getClass().getSimpleName() + ": " + e + "现已还原成初始设置").color(net.md_5.bungee.api.ChatColor.YELLOW).create());
         }
+    }
+    /**
+     * This method is for <code>loadSetting()</code>.
+     */
+    private JsonObject getStatusWithTry(JsonObject json) {
+        FileHandler fileHandler = new FileHandler();
+        for (int attempt = 0; attempt < 2; attempt++) {
+            try {
+                json = fileHandler.getStatus(this.player).getAsJsonObject(this.getClass().getSimpleName());
+                break;
+            } catch (FileNotFoundException e) {
+                try {
+                    fileHandler.createStatus(this.player);
+                } catch (IOException ex) {
+                    sendErrorMsg(e, ex);
+                    throw new RuntimeException(ex);
+                }
+            } catch (NullPointerException e) {
+                try {
+                    fileHandler.resetStatus(this.player);
+                } catch (IOException ex) {
+                    sendErrorMsg(e, ex);
+                    throw new RuntimeException(ex);
+                }
+            }
+        }
+        return json;
     }
 
     private void sendErrorMsg(Exception e, IOException ex) {

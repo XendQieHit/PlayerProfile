@@ -6,20 +6,24 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.mcxqh.playerProfile.PlayerProfile;
 import org.mcxqh.playerProfile.commands.SubCommand;
 import org.mcxqh.playerProfile.commands.titles.subcommand.add;
 import org.mcxqh.playerProfile.commands.titles.subcommand.hide;
 import org.mcxqh.playerProfile.commands.titles.subcommand.list;
 import org.mcxqh.playerProfile.commands.titles.subcommand.set;
+import org.mcxqh.playerProfile.players.Profile;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class mainCommand implements TabExecutor {
     private final ArrayList<SubCommand> subCommands = new ArrayList<>();
-
     public mainCommand() {
         this.subCommands.add(new add());
         this.subCommands.add(new list());
@@ -69,9 +73,43 @@ public class mainCommand implements TabExecutor {
      * @return A List of possible completions for the final argument, or null
      * to default to the command executor
      */
-    @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        return List.of();
+        Player player = (Player) sender;
+        ArrayList<String> playerNameList = PlayerProfile.playerNameArrayList;
+        if (!args[0].isEmpty()) { // if args is not empty.
+
+            if (Profile.playerMapWithName.containsKey(args[0])) { // if args contains player's name
+                player = Profile.playerMapWithName.get(args[0]);
+                args = removeFirst(args);
+            }
+
+            // run tabCompleter
+            ArrayList<String> linkedList = new ArrayList<>();
+            for (SubCommand subCommand : subCommands) {
+                String subCommandName = subCommand.getClass().getSimpleName();
+
+                if (args[0].equalsIgnoreCase(subCommandName) && args.length >= 2) {
+                    args = removeFirst(args);
+                    Logger.getLogger("PlayerProfile").info(Arrays.toString(args));
+                    return subCommand.tab(args, player);
+                } else if (args.length == 1 && subCommandName.startsWith(args[0].toLowerCase())) {
+                    linkedList.add(subCommandName);
+                }
+            }
+            return linkedList;
+
+        } else {
+            return subCommandsNames;
+        }
+    }
+
+    /**
+     * Using for args, remove first element of args and make up.
+     */
+    public static String[] removeFirst(String[] args) {
+        String[] args1 = new String[args.length - 1];
+        System.arraycopy(args, 1, args1, 0, args.length - 1);
+        return args1;
     }
 
     /**

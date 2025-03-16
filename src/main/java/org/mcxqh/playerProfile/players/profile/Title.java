@@ -63,7 +63,7 @@ public class Title {
         // }
         JsonObject json = new JsonObject();
         json.addProperty("name", this.getName());
-        json.addProperty("chatColor", this.getColor().asBungee().getName().toUpperCase());
+        json.addProperty("color", this.getColor().asBungee().getName().toUpperCase());
         json.addProperty("description", this.getDescription());
 
         JsonObject issuer = new JsonObject();

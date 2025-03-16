@@ -40,17 +40,9 @@ public class PlayerJoinListener implements Listener {
         // add new profile
         Profile profile = new Profile(player);
 
-        // load json file
-        JsonObject JsonStatusSetting, JsonProfileSetting;
-        try {
-            JsonStatusSetting = fileHandler.getStatus(player);
-        } catch (FileNotFoundException e) {
-            Logger.getLogger("PlayerProfile").severe("Could not read json file: " + e);
-            throw new RuntimeException(e);
-        }
-
         // load player status setting
         profile.getStatus().loadSetting();
+        profile.loadTitle();
 
         // put player into statusListener pool
         try {

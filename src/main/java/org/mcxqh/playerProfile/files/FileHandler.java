@@ -7,6 +7,8 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.entity.Player;
 import org.mcxqh.playerProfile.players.Profile;
+import org.mcxqh.playerProfile.players.profile.IssuerClass;
+import org.mcxqh.playerProfile.players.profile.Title;
 import org.mcxqh.playerProfile.players.profile.status.SubStatus;
 
 import java.io.*;
@@ -43,8 +45,6 @@ public class FileHandler {
 
         for (SubStatus subStatus : profile.getStatus().getAllSubStatuses()) {
             json.add(subStatus.getClass().getSimpleName(), subStatus.toJson());
-            Logger.getLogger("PLayerProfile").info(fileName + ": " + subStatus.toJson().toString());
-            Logger.getLogger("PlayerProfile").info(json.toString());
         }
         writer.write(json.toString());
         writer.close();
@@ -57,18 +57,6 @@ public class FileHandler {
     public JsonObject getStatus(Player player) throws FileNotFoundException {
         String fileName = player.getName() + "@" + player.getUniqueId() + ".json";
         File statusSettingFile = new File(statusFolder, fileName);
-
-        // check status file
-        if (!statusSettingFile.exists()) {
-            if (!statusFolder.exists()) {
-                statusFolder.mkdir();
-            }
-            try {
-                createStatus(player);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
 
         Gson gson = new Gson();
         JsonReader reader = new JsonReader(new FileReader(statusSettingFile));
@@ -179,22 +167,28 @@ public class FileHandler {
             }
             titleFile.createNewFile();
 
-            JsonWriter jsonWriter = new JsonWriter(new FileWriter(titleFile));
-
+            Logger.getLogger("PlayerProfile").info("now creating...");
+            BufferedWriter writer = new BufferedWriter(new FileWriter(titleFile));
             JsonArray jsonArray = new JsonArray();
-            JsonObject title = new JsonObject();
-            title.addProperty("name", "testTitle");
-            title.addProperty("chatColor", org.bukkit.ChatColor.DARK_AQUA.toString());
-            title.addProperty("description", "This is a testing title!\nhi!");
-            JsonObject issuer = new JsonObject();
-            issuer.addProperty("name", player.getName());
-            issuer.addProperty("UUID", player.getUniqueId().toString());
-            title.add("issuer", issuer);
-            jsonArray.add(title);
 
-            jsonWriter.jsonValue(jsonArray.getAsString());
-            jsonWriter.close();
+            Title title = new Title(
+                    "testTitle",
+                    org.bukkit.ChatColor.DARK_AQUA,
+                    "This is a testing title!\nhi!",
+                    player.getName(),
+                    IssuerClass.PERSONAL
+            );
+            jsonArray.add(title.toJson());
+
+            Logger.getLogger("PlayerProfile").info("hi");
+            Logger.getLogger("PlayerProfile").info(title.toJson().toString());
+            Logger.getLogger("PlayerProfile").info(jsonArray.toString());
+
+            writer.write(jsonArray.toString());
+            writer.close();
+            return;
         }
+        Logger.getLogger("PlayerProfile").info("没删掉！！！！！");
     }
 
     /**
@@ -204,38 +198,35 @@ public class FileHandler {
      */
     public JsonArray getTitle(Player player) throws FileNotFoundException {
         final File titleFile = new File(titleFolder, player.getName() + "@" + player.getUniqueId() + ".json");
-
-        // check title file
-        if (!titleFile.exists()) {
-            try {
-                createTitle(player);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
         // read title file
         Gson gson = new Gson();
-        JsonObject json;
-        JsonReader reader = new JsonReader(new FileReader(titleFile));
-        json = gson.fromJson(reader, JsonArray.class);
-
+        JsonArray json;
+        try (JsonReader reader = new JsonReader(new FileReader(titleFile))) {
+            Logger.getLogger("PlayerProfile").info("init reader");
+            json = gson.fromJson(reader, JsonArray.class);
+            Logger.getLogger("PlayerProfile").info(json.toString());
+        } catch (IOException e) {
+            Logger.getLogger("PlayerProfile").severe("这怎么关不掉！！！！！");
+            throw new FileNotFoundException();
+        }
         return json.getAsJsonArray();
     }
 
     public void resetTitle(Player player) throws IOException {
-        final File titleFile = new File(titleFolder, player.getName() + "@" + player.getUniqueId() + ".json");
+        final String titleFileName = player.getName() + "@" + player.getUniqueId() + ".json";
+        final File titleFile = new File(titleFolder, titleFileName);
 
-        if (titleFolder.exists() && titleFile.exists()) {
-            titleFile.delete();
+        if (titleFile.delete()) {
+            Logger.getLogger("PlayerProfile").info("delete done!");
         }
         createTitle(player);
     }
 
-    public void saveTitle(Player player, JsonObject jsonObject) throws IOException {
+    public void saveTitle(Player player, JsonArray jsonArray) throws IOException {
         final File titleFile = new File(titleFolder, player.getName() + "@" + player.getUniqueId() + ".json");
         JsonWriter jsonWriter = new JsonWriter(new FileWriter(titleFile));
-        jsonWriter.jsonValue(jsonObject.toString());
+        jsonWriter.jsonValue(jsonArray.toString());
+        jsonWriter.close();
     }
 
     /**

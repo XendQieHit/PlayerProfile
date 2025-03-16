@@ -30,6 +30,7 @@ public class PlayerQuitListener implements Listener {
         // Save status config
         Status status = profile.getStatus();
         status.saveStatus();
+        profile.saveTitle();
 
         // Broadcast
         world.playSound(player, Sound.BLOCK_STONE_BUTTON_CLICK_OFF, 10F, 5F);

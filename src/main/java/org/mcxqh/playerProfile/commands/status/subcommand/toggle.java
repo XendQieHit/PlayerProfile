@@ -52,18 +52,24 @@ public class toggle implements SubCommand {
             );
 
             for (int i = 1; i <= 2 && i < args.length; i++) { // 确保只处理前两个额外参数
-                switch (args[i].toLowerCase()) {
-                    case "true":
-                        methods.get(i - 1).accept(true);
-                        sendMessage(sender, i == 1 ? "状态已启用" : "自定义状态名称已启用", ChatColor.YELLOW);
-                        break;
-                    case "false":
-                        methods.get(i - 1).accept(false);
-                        sendMessage(sender, i == 1 ? "状态已禁用" : "自定义状态名称已禁用", ChatColor.YELLOW);
-                        break;
-                    default:
-                        sendMessage(sender, i == 1 ? "状态显示设置参数错误(应为true或false)" : "自定义状态名称显示设置参数错误(应为true或false)", ChatColor.RED);
-                        return true;
+                if (i != 2 || subStatus.getCustomName() != null) { // Ensure CustomName is not null
+                    switch (args[i].toLowerCase()) {
+                        case "true" -> {
+                            methods.get(i - 1).accept(true);
+                            sendMessage(sender, i == 1 ? "状态已启用" : "自定义状态名称已启用", ChatColor.YELLOW);
+                        }
+                        case "false" -> {
+                            methods.get(i - 1).accept(false);
+                            sendMessage(sender, i == 1 ? "状态已禁用" : "自定义状态名称已禁用", ChatColor.YELLOW);
+                        }
+                        default -> {
+                            sendMessage(sender, i == 1 ? "状态显示设置参数错误(应为true或false)" : "自定义状态名称显示设置参数错误(应为true或false)", ChatColor.RED);
+                            return true;
+                        }
+                    }
+                } else {
+                    sendMessage(sender, "自定义状态名称为空，无法启用自定义状态名称", ChatColor.RED);
+                    return true;
                 }
             }
 
