@@ -8,6 +8,7 @@ import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.mcxqh.playerProfile.Data;
 import org.mcxqh.playerProfile.PlayerProfile;
 import org.mcxqh.playerProfile.commands.SubCommand;
 import org.mcxqh.playerProfile.commands.status.subcommand.custom;
@@ -32,9 +33,9 @@ public class mainCommand implements TabExecutor {
         this.subCommands.add(new list());
         this.subCommands.add(new set());
         this.subCommands.add(new toggle());
-        for (SubCommand subCommand : subCommands) {
-            subCommandsNames.add(subCommand.getClass().getSimpleName().toLowerCase());
-        }
+        subCommands.forEach(subCommand ->
+                subCommandsNames.add(subCommand.getClass().getSimpleName())
+        );
     }
 
     /**
@@ -55,8 +56,8 @@ public class mainCommand implements TabExecutor {
         Player player;
         if (args.length != 0) { // if args is not empty.
 
-            if (Profile.playerMapWithName.containsKey(args[0])) { // if args contains player's name
-                player = Profile.playerMapWithName.get(args[0]);
+            if (Data.playerMapWithName.containsKey(args[0])) { // if args contains player's name
+                player = Data.playerMapWithName.get(args[0]);
                 args = removeFirst(args);
             } else {
                 if (sender instanceof Player) {
@@ -98,11 +99,11 @@ public class mainCommand implements TabExecutor {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         Player player = (Player) sender;
-        ArrayList<String> playerNameList = PlayerProfile.playerNameArrayList;
+        ArrayList<String> playerNameList = Data.playerNameArrayList;
         if (!args[0].isEmpty()) { // if args is not empty.
 
-            if (Profile.playerMapWithName.containsKey(args[0])) { // if args contains player's name
-                player = Profile.playerMapWithName.get(args[0]);
+            if (Data.playerMapWithName.containsKey(args[0])) { // if args contains player's name
+                player = Data.playerMapWithName.get(args[0]);
                 args = removeFirst(args);
             }
 

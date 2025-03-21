@@ -4,11 +4,12 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.mcxqh.playerProfile.Data;
 import org.mcxqh.playerProfile.commands.SubCommand;
 import org.mcxqh.playerProfile.commands.status.mainCommand;
 import org.mcxqh.playerProfile.players.Profile;
+import org.mcxqh.playerProfile.players.profile.StatusManager;
 import org.mcxqh.playerProfile.players.profile.status.Status;
-import org.mcxqh.playerProfile.players.profile.status.SubStatus;
 
 import java.util.List;
 import java.util.logging.Logger;
@@ -20,14 +21,14 @@ public class set implements SubCommand {
      */
     @Override
     public boolean run(CommandSender sender, Player player, String[] args) {
-        Profile profile = Profile.profileMapWithUUID.get(player.getUniqueId());
-        Status status = profile.getStatus();
+        Profile profile = Data.profileMapWithUUID.get(player.getUniqueId());
+        StatusManager statusManager = profile.getStatusManager();
 
         Logger.getLogger("PlayerProfile").info(args.toString());
 
-        for (SubStatus subStatus : status.getAllSubStatuses()) {
-            if (args[0].equalsIgnoreCase(subStatus.getClass().getSimpleName())) {
-                subStatus.now();
+        for (Status status : statusManager.getAllSubStatuses()) {
+            if (args[0].equalsIgnoreCase(status.getClass().getSimpleName())) {
+                status.now();
                 sender.spigot().sendMessage(new ComponentBuilder("设置成功").color(ChatColor.YELLOW).create());
             }
         }
@@ -36,8 +37,8 @@ public class set implements SubCommand {
 
     @Override
     public List<String> tab(String[] args, Player player) {
-        Profile profile = Profile.profileMapWithUUID.get(player.getUniqueId());
-        Status status = profile.getStatus();
-        return args.length == 1 ? mainCommand.pair(args[0], status.getAllSubStatusNames()) : List.of();
+        Profile profile = Data.profileMapWithUUID.get(player.getUniqueId());
+        StatusManager statusManager = profile.getStatusManager();
+        return args.length == 1 ? mainCommand.pair(args[0], statusManager.getAllSubStatusNames()) : List.of();
     }
 }

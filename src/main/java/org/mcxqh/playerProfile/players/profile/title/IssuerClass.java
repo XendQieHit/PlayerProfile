@@ -1,4 +1,4 @@
-package org.mcxqh.playerProfile.players.profile;
+package org.mcxqh.playerProfile.players.profile.title;
 
 import org.bukkit.ChatColor;
 

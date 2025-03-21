@@ -6,15 +6,14 @@ import com.google.gson.stream.JsonWriter;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.entity.Player;
+import org.mcxqh.playerProfile.Data;
 import org.mcxqh.playerProfile.players.Profile;
-import org.mcxqh.playerProfile.players.profile.IssuerClass;
-import org.mcxqh.playerProfile.players.profile.Title;
-import org.mcxqh.playerProfile.players.profile.status.SubStatus;
+import org.mcxqh.playerProfile.players.profile.title.IssuerClass;
+import org.mcxqh.playerProfile.players.profile.title.Title;
+import org.mcxqh.playerProfile.players.profile.status.Status;
 
 import java.io.*;
-import java.util.Iterator;
 import java.util.logging.Logger;
-import java.util.stream.Stream;
 
 public class FileHandler {
 
@@ -30,24 +29,28 @@ public class FileHandler {
      */
     public void createStatus(Player player) throws IOException {
         String fileName = player.getName() + "@" + player.getUniqueId() + ".json";
-        File statusSettingFile = new File(statusFolder, fileName);
-
-        Logger.getLogger("PLayerProfile").info("12346");
-
-        Profile profile = Profile.profileMapWithUUID.get(player.getUniqueId());
+        File statusFile = new File(statusFolder, fileName);
 
         // check status file
-        statusSettingFile.createNewFile();
+        if (!statusFile.exists()) {
+            if (!statusFolder.exists()) {
+                statusFolder.mkdir();
+            }
+            statusFile.createNewFile();
+            Logger.getLogger("PLayerProfile").info("12346");
 
-        // Initialize status file
-        BufferedWriter writer = new BufferedWriter(new FileWriter(statusSettingFile));
-        JsonObject json = new JsonObject();
+            Profile profile = Data.profileMapWithUUID.get(player.getUniqueId());
 
-        for (SubStatus subStatus : profile.getStatus().getAllSubStatuses()) {
-            json.add(subStatus.getClass().getSimpleName(), subStatus.toJson());
+            // Initialize status file
+            BufferedWriter writer = new BufferedWriter(new FileWriter(statusFile));
+            JsonObject json = new JsonObject();
+
+            for (Status status : profile.getStatusManager().getAllSubStatuses()) {
+                json.add(status.getClass().getSimpleName(), status.toJson());
+            }
+            writer.write(json.toString());
+            writer.close();
         }
-        writer.write(json.toString());
-        writer.close();
     }
 
     /**

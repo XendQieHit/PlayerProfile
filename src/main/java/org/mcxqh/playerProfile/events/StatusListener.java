@@ -9,16 +9,17 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.mcxqh.playerProfile.Data;
 import org.mcxqh.playerProfile.players.Profile;
-import org.mcxqh.playerProfile.players.profile.status.subStatus.AFK;
-import org.mcxqh.playerProfile.players.profile.status.subStatus.Idle;
+import org.mcxqh.playerProfile.players.profile.status.instances.AFK;
+import org.mcxqh.playerProfile.players.profile.status.instances.Idle;
 
 import java.io.File;
 import java.util.*;
 
 public class StatusListener implements Listener {
     private final FileConfiguration config = YamlConfiguration.loadConfiguration(new File(new File("plugins/PlayerProfile"),"config.yml"));
-    private final Map<UUID, Profile> profileMapWithUUID = Profile.profileMapWithUUID;
+    private final Map<UUID, Profile> profileMapWithUUID = Data.profileMapWithUUID;
     public static final ArrayList<Profile> activePlayerListProfile = new ArrayList<>();
     public static final ArrayList<Profile> AFKPlayerListProfile = new ArrayList<>();
     public static ArrayList<Profile> getActivePlayerList() {
@@ -45,9 +46,9 @@ public class StatusListener implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     public void disableAFK(PlayerMoveEvent event) {
         Player player = event.getPlayer();
-        Profile profile = Profile.profileMapWithUUID.get(player.getUniqueId());
-        AFK afk = profile.getStatus().getAFK();
-        Idle idle = profile.getStatus().getIdle();
+        Profile profile = Data.profileMapWithUUID.get(player.getUniqueId());
+        AFK afk = profile.getStatusManager().getAFK();
+        Idle idle = profile.getStatusManager().getIdle();
 
         if (afk.isAFK()) {
             // disable AFK status of moving afk player
@@ -70,10 +71,9 @@ public class StatusListener implements Listener {
     }
 
     public static void isAFK(Profile profile) {
-        Map<Profile, Player> playerMapWithProfile = Profile.playerMapWithProfile;
-        Player player = playerMapWithProfile.get(profile);
-        AFK afk = profile.getStatus().getAFK();
-        Idle idle = profile.getStatus().getIdle();
+        Player player = profile.getPlayer();
+        AFK afk = profile.getStatusManager().getAFK();
+        Idle idle = profile.getStatusManager().getIdle();
         FileConfiguration config = YamlConfiguration.loadConfiguration(new File(new File("plugins/PlayerProfile"),"config.yml"));
 
         // verify idle time

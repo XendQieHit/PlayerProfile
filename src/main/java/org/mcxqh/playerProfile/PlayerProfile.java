@@ -3,7 +3,6 @@ package org.mcxqh.playerProfile;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.mcxqh.playerProfile.commands.profile.mainCommand;
 import org.mcxqh.playerProfile.events.PlayerChatListener;
@@ -11,10 +10,8 @@ import org.mcxqh.playerProfile.events.PlayerJoinListener;
 import org.mcxqh.playerProfile.events.PlayerQuitListener;
 import org.mcxqh.playerProfile.events.StatusListener;
 import org.mcxqh.playerProfile.players.Profile;
-import org.mcxqh.playerProfile.players.profile.status.Status;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.logging.Logger;
 
 public final class PlayerProfile extends JavaPlugin {
@@ -22,8 +19,7 @@ public final class PlayerProfile extends JavaPlugin {
     private final FileConfiguration pluginConfig = getConfig();
     private final File dataFolder = getDataFolder();
     private final File configFile = new File(dataFolder,"config.yml");
-    public static final ArrayList<Player> playerArrayList = new ArrayList<>();
-    public static final ArrayList<String> playerNameArrayList = new ArrayList<>();
+
 
     @Override
     public void onEnable() {
@@ -31,16 +27,14 @@ public final class PlayerProfile extends JavaPlugin {
         // But this section do not work as usual. I can not find the reason. Is there anyone could find?
         for (World world : getServer().getWorlds()) {
             if (!world.getPlayers().isEmpty()) {
-                playerArrayList.addAll(world.getPlayers());
+                world.getPlayers().forEach(player -> Data.playerMapWithUUID.put(player.getUniqueId(), player));
             }
         }
-        if (!playerArrayList.isEmpty()) {
-            for (Player player : playerArrayList) {
-                playerNameArrayList.add(player.getName());
-            }
-            for (Player player : playerArrayList) {
+        if (!Data.playerMapWithUUID.isEmpty()) {
+            Data.playerMapWithUUID.forEach((uuid, player) -> {
+                Data.playerNameArrayList.add(player.getName());
                 PlayerJoinListener.EventJoinHandler(player);
-            }
+            });
         }
 
         // Load config
@@ -71,21 +65,7 @@ public final class PlayerProfile extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerJoinListener(), this);
         getServer().getPluginManager().registerEvents(new PlayerQuitListener(), this);
         getServer().getPluginManager().registerEvents(new PlayerChatListener(), this);
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
-            @Override
-            public void run() {
-                StatusListener.AFKDetector();
-            }
-        }, 0L, 20L); // per 1 second
-
-        // 这里原本是优化数组长度的定时任务，但考虑性能开销，就先注释掉了
-        /*Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
-            @Override
-            public void run() {
-                playerArrayList.trimToSize();
-                playerNameArrayList.trimToSize();
-            }
-        }, 0L, 6000L);*/
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, StatusListener::AFKDetector, 0L, 20L); // per 1 second
 
         // Register Commands
         this.getCommand("profile").setExecutor(new mainCommand());
@@ -96,10 +76,9 @@ public final class PlayerProfile extends JavaPlugin {
     @Override
     public void onDisable() {
         // Plugin shutdown logic\
-        for (Player player : playerArrayList) {
-            Status status = Profile.profileMapWithUUID.get(player.getUniqueId()).getStatus();
-            status.saveStatus();
-
-        }
+        Data.playerMapWithUUID.forEach((uuid, player) -> {
+            Profile profile = Data.profileMapWithUUID.get(player.getUniqueId());
+            profile.saveSetting();
+        });
     }
 }

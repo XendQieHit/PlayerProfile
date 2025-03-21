@@ -9,12 +9,10 @@ import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.mcxqh.playerProfile.Data;
 import org.mcxqh.playerProfile.PlayerProfile;
 import org.mcxqh.playerProfile.commands.SubCommand;
-import org.mcxqh.playerProfile.commands.titles.subcommand.add;
-import org.mcxqh.playerProfile.commands.titles.subcommand.hide;
-import org.mcxqh.playerProfile.commands.titles.subcommand.list;
-import org.mcxqh.playerProfile.commands.titles.subcommand.set;
+import org.mcxqh.playerProfile.commands.titles.subcommand.*;
 import org.mcxqh.playerProfile.players.Profile;
 
 import java.util.ArrayList;
@@ -24,13 +22,18 @@ import java.util.logging.Logger;
 
 public class mainCommand implements TabExecutor {
     private final ArrayList<SubCommand> subCommands = new ArrayList<>();
+    private final List<String> subCommandsNames = new ArrayList<>();
+
     public mainCommand() {
-        this.subCommands.add(new add());
+        this.subCommands.add(new create());
+        this.subCommands.add(new award());
         this.subCommands.add(new list());
         this.subCommands.add(new set());
         this.subCommands.add(new hide());
+        subCommands.forEach(subCommand ->
+            subCommandsNames.add(subCommand.getClass().getSimpleName())
+        );
     }
-
 
     /**
      * Executes the given command, returning its success.
@@ -46,17 +49,44 @@ public class mainCommand implements TabExecutor {
      */
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+        // args pretreatment
+        Player player;
+        if (args.length != 0) { // if args is not empty.
+
+            if (Data.playerMapWithName.containsKey(args[0])) { // if args contains player's name
+                player = Data.playerMapWithName.get(args[0]);
+                args = removeFirst(args);
+            } else {
+                if (sender instanceof Player) {
+                    player = (Player) sender;
+                } else {
+                    sender.spigot().sendMessage(new ComponentBuilder("/status <Player> custom|list|reload|set|toggle").color(ChatColor.YELLOW).create());
+                    return true;
+                }
+            }
+
+            // run command
+            for (SubCommand subCommand : subCommands) {
+                if (args[0].equalsIgnoreCase(subCommand.getClass().getSimpleName())) {
+                    Logger.getLogger("PlayerProfile").info("start: " + Arrays.toString(args));
+                    args = removeFirst(args);
+                    return subCommand.run(sender, player, args);
+                }
+            }
+        }
+
         sender.spigot().sendMessage(SendHelpMsg());
         return true;
     }
 
     private BaseComponent[] SendHelpMsg() {
-        ComponentBuilder componentBuilder = new ComponentBuilder("===================" + ChatColor.YELLOW + "/titles" + ChatColor.AQUA + "=================\n").color(ChatColor.AQUA);
-        componentBuilder.append("/title add [称号名] [颜色] 添加自定义称号\n").color(ChatColor.YELLOW);
-        componentBuilder.append("/title list                 查看拥有的称号\n");
-        componentBuilder.append("/title set [称号]           展示称号\n");
-        componentBuilder.append("/title hide [称号]          隐藏称号\n");
-        componentBuilder.append("===========================================").color(ChatColor.AQUA);
+        ComponentBuilder componentBuilder = new ComponentBuilder("===============================" + ChatColor.YELLOW + "/titles" + ChatColor.AQUA + "=============================\n").color(ChatColor.AQUA);
+        componentBuilder.append("/title add <称号名> <颜色> <简介>                   给自己添加自定义称号\n").color(ChatColor.YELLOW);
+        componentBuilder.append("/title award <玩家> <称号名> <颜色> <简介> [颁发身份]           隐藏称号\n");
+        componentBuilder.append("/title list                                           查看拥有的称号\n");
+        componentBuilder.append("/title set <称号>                                           展示称号\n");
+        componentBuilder.append("/title hide <称号>                                          隐藏称号\n");
+        componentBuilder.append("===================================================================").color(ChatColor.AQUA);
         return componentBuilder.create();
     }
 
@@ -64,7 +94,7 @@ public class mainCommand implements TabExecutor {
      * Requests a list of possible completions for a command argument.
      *
      * @param sender  Source of the command.  For players tab-completing a
-     *                command inside of a command block, this will be the player, not
+     *                command inside a command block, this will be the player, not
      *                the command block.
      * @param command Command which was executed
      * @param label   Alias of the command which was used
@@ -75,11 +105,11 @@ public class mainCommand implements TabExecutor {
      */
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         Player player = (Player) sender;
-        ArrayList<String> playerNameList = PlayerProfile.playerNameArrayList;
+        ArrayList<String> playerNameList = Data.playerNameArrayList;
         if (!args[0].isEmpty()) { // if args is not empty.
 
-            if (Profile.playerMapWithName.containsKey(args[0])) { // if args contains player's name
-                player = Profile.playerMapWithName.get(args[0]);
+            if (Data.playerMapWithName.containsKey(args[0])) { // if args contains player's name
+                player = Data.playerMapWithName.get(args[0]);
                 args = removeFirst(args);
             }
 

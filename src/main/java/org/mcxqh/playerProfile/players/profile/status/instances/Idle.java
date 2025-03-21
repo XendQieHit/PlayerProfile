@@ -1,14 +1,15 @@
-package org.mcxqh.playerProfile.players.profile.status.subStatus;
+package org.mcxqh.playerProfile.players.profile.status.instances;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.mcxqh.playerProfile.Data;
 import org.mcxqh.playerProfile.players.Profile;
-import org.mcxqh.playerProfile.players.profile.status.SubStatus;
+import org.mcxqh.playerProfile.players.profile.status.Status;
 
 import static org.mcxqh.playerProfile.events.StatusListener.AFKPlayerListProfile;
 import static org.mcxqh.playerProfile.events.StatusListener.activePlayerListProfile;
 
-public class Idle extends SubStatus {
+public class Idle extends Status {
     private boolean isIdle;
     private int Idle_TIME;
 
@@ -17,7 +18,7 @@ public class Idle extends SubStatus {
      */
     public Idle(Player player) {
         this.player = player;
-        this.isIdle = false;
+        this.isIdle = true;
         this.Idle_TIME = 0;
         this.customName = null;
         this.defaultColor = ChatColor.WHITE;
@@ -51,9 +52,9 @@ public class Idle extends SubStatus {
      */
     @Override
     public boolean now() {
-        Profile profile = Profile.profileMapWithUUID.get(player.getUniqueId());
-        AFK afk = profile.getStatus().getAFK();
-        Idle idle = profile.getStatus().getIdle();
+        Profile profile = Data.profileMapWithUUID.get(player.getUniqueId());
+        AFK afk = profile.getStatusManager().getAFK();
+        Idle idle = profile.getStatusManager().getIdle();
         // change active status
         afk.setAFK(false);
         idle.setIdle(true);
@@ -63,7 +64,7 @@ public class Idle extends SubStatus {
         if (this.isDisplay) {
             // recover player's name
             String playerName;
-            if (isDisplayCustomName && !customName.isEmpty()) {
+            if (isDisplayCustomName && !getCustomName().isEmpty()) {
                 playerName = player.getName() + " " + idle.getCustomName();
             } else {
                 playerName = player.getName();

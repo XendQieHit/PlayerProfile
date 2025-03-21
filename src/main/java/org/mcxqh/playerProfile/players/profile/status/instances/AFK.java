@@ -1,15 +1,15 @@
-package org.mcxqh.playerProfile.players.profile.status.subStatus;
+package org.mcxqh.playerProfile.players.profile.status.instances;
 
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.mcxqh.playerProfile.players.profile.status.SubStatus;
+import org.mcxqh.playerProfile.players.profile.status.Status;
 
 import static org.mcxqh.playerProfile.events.StatusListener.AFKPlayerListProfile;
 import static org.mcxqh.playerProfile.events.StatusListener.activePlayerListProfile;
 
-public class AFK extends SubStatus {
+public class AFK extends Status {
     private boolean isAFK;
     private int AFK_TIME;
 
@@ -18,7 +18,7 @@ public class AFK extends SubStatus {
      */
     public AFK(Player player) {
         this.player = player;
-        this.isAFK = true;
+        this.isAFK = false;
         this.AFK_TIME = 0;
         this.customName = null;
         this.defaultColor = ChatColor.DARK_GRAY;
@@ -50,13 +50,13 @@ public class AFK extends SubStatus {
     @Override
     public String getCustomName() {
         if (customName != null && !customName.isEmpty()) {
-            return color + "[" + getRawCustomStatus() + "]" + ChatColor.RESET;
+            return color + "[" + customName + "]" + ChatColor.RESET;
         }
         return ChatColor.DARK_GRAY + "[AFK]" + ChatColor.RESET;
     }
 
     public boolean now() {
-        Idle idle = profile.getStatus().getIdle();
+        Idle idle = profile.getStatusManager().getIdle();
         // set AFK status
         this.setAFK(true);
         idle.setIdle(false);

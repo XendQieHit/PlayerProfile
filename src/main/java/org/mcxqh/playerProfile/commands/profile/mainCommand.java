@@ -7,6 +7,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.mcxqh.playerProfile.Data;
 import org.mcxqh.playerProfile.commands.SubCommand;
 import org.mcxqh.playerProfile.commands.profile.subcommand.status;
 import org.mcxqh.playerProfile.players.Profile;
@@ -35,8 +36,8 @@ public class mainCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         Player player;
-        if (Profile.playerMapWithName.containsKey(args[0])) { // if args contains player's name
-            player = Profile.playerMapWithName.get(args[0]);
+        if (Data.playerMapWithName.containsKey(args[0])) { // if args contains player's name
+            player = Data.playerMapWithName.get(args[0]);
         } else {
             if (sender instanceof Player) {
                 player = (Player) sender;

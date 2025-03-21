@@ -8,29 +8,27 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.mcxqh.playerProfile.Data;
 import org.mcxqh.playerProfile.players.Profile;
-import org.mcxqh.playerProfile.players.profile.status.Status;
 
 public class PlayerQuitListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void EventQuitListener(PlayerQuitEvent event) {
         Player player = event.getPlayer();
-        Profile profile = Profile.profileMapWithUUID.get(player.getUniqueId());
+        Profile profile = Data.profileMapWithUUID.get(player.getUniqueId());
         World world = player.getWorld();
 
         // Remove from all playerLists
-        Profile.profileMapWithUUID.remove(player.getUniqueId());
-        if (profile.getStatus().getAFK().isAFK()) {
+        Data.profileMapWithUUID.remove(player.getUniqueId());
+        if (profile.getStatusManager().getAFK().isAFK()) {
             StatusListener.getAFKPlayerList().remove(profile);
         } else {
             StatusListener.getActivePlayerList().remove(profile);
         }
 
         // Save status config
-        Status status = profile.getStatus();
-        status.saveStatus();
-        profile.saveTitle();
+        profile.saveSetting();
 
         // Broadcast
         world.playSound(player, Sound.BLOCK_STONE_BUTTON_CLICK_OFF, 10F, 5F);

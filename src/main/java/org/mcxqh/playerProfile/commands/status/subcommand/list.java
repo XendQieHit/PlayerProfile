@@ -5,10 +5,11 @@ import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.mcxqh.playerProfile.Data;
 import org.mcxqh.playerProfile.commands.SubCommand;
 import org.mcxqh.playerProfile.players.Profile;
+import org.mcxqh.playerProfile.players.profile.StatusManager;
 import org.mcxqh.playerProfile.players.profile.status.Status;
-import org.mcxqh.playerProfile.players.profile.status.SubStatus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,13 +17,13 @@ import java.util.List;
 public class list implements SubCommand {
 
     public boolean run(CommandSender sender, Player player, String[] args) {
-        Profile profile = Profile.profileMapWithUUID.get(player.getUniqueId());
-        Status status = profile.getStatus();
+        Profile profile = Data.profileMapWithUUID.get(player.getUniqueId());
+        StatusManager statusManager = profile.getStatusManager();
 
         // 加载状态
-        ArrayList<SubStatus> subStatuses = new ArrayList<>();
-        subStatuses.add(status.getAFK());
-        subStatuses.add(status.getIdle());
+        ArrayList<Status> statuses = new ArrayList<>();
+        statuses.add(statusManager.getAFK());
+        statuses.add(statusManager.getIdle());
 
         // Player 的状态设置：
         // 状态     显示     自定义状态名
@@ -31,8 +32,8 @@ public class list implements SubCommand {
         sender.spigot().sendMessage(chatTopBar.create());
 
         // 这里就是具体状态的各个属性了
-        for (SubStatus subStatus : subStatuses) {
-            player.spigot().sendMessage(batch(subStatus));
+        for (Status status : statuses) {
+            player.spigot().sendMessage(batch(status));
         }
         return true;
     }
@@ -42,7 +43,7 @@ public class list implements SubCommand {
         return List.of();
     }
 
-    private <T extends SubStatus> BaseComponent[] batch(T status) {
+    private <T extends Status> BaseComponent[] batch(T status) {
         ComponentBuilder componentBuilder = new ComponentBuilder();
 
         // 状态

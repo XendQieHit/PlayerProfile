@@ -1,6 +1,5 @@
 package org.mcxqh.playerProfile.events;
 
-import com.google.gson.JsonObject;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.World;
@@ -10,11 +9,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.mcxqh.playerProfile.Data;
 import org.mcxqh.playerProfile.PlayerProfile;
 import org.mcxqh.playerProfile.files.FileHandler;
 import org.mcxqh.playerProfile.players.Profile;
 
-import java.io.FileNotFoundException;
 import java.util.ConcurrentModificationException;
 import java.util.logging.Logger;
 
@@ -40,15 +39,14 @@ public class PlayerJoinListener implements Listener {
         // add new profile
         Profile profile = new Profile(player);
 
-        // load player status setting
-        profile.getStatus().loadSetting();
-        profile.loadTitle();
+        // load player setting and data
+        profile.loadSetting();
 
         // put player into statusListener pool
         try {
             StatusListener.getActivePlayerList().add(profile);
-            PlayerProfile.playerArrayList.add(player);
-            PlayerProfile.playerNameArrayList.add(player.getName());
+            Data.playerMapWithUUID.put(player.getUniqueId(), player);
+            Data.playerNameArrayList.add(player.getName());
 
             Logger.getLogger("PlayerProfile").info("Add " + player.getName() + " successfully!");
         } catch (ConcurrentModificationException e) {
