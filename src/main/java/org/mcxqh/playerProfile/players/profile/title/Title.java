@@ -1,24 +1,23 @@
 package org.mcxqh.playerProfile.players.profile.title;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
+import org.mcxqh.playerProfile.players.profile.identity.Identity;
 
 public class Title {
     private String name;
     private ChatColor color;
     private String description;
+    private final Identity issuerIdentity;
 
-    private final IssuerClass issuerClass;
-    private final String issuerName;
-
-    public Title(String name, ChatColor color, String description, String issuerName, IssuerClass issuerClass) {
+    public Title(String name, ChatColor color, String description, Identity issuerIdentity) {
         this.name = name;
         this.color = color;
         this.description = description;
-        this.issuerName = issuerName;
-        this.issuerClass = issuerClass;
+        this.issuerIdentity = issuerIdentity;
     }
 
     public BaseComponent getTitle() {
@@ -45,33 +44,7 @@ public class Title {
     }
 
     public JsonObject toJson() {
-        // {
-        //     "name": this.getRawTitle(),
-        //     "chatColor": this.getChatColor(),
-        //     "description": this.getDescription(),
-        //     "owner": {
-        //         "name": this.owner.getName(),
-        //         "UUID": this.owner.getUniqueId().toString()
-        //     },
-        //     "issuer": {
-        //         "name": this.getIssuerName(),
-        //         "class": this.issuerClass.getName()
-        //     }
-        // }
-        JsonObject json = new JsonObject();
-        json.addProperty("name", this.getName());
-        json.addProperty("color", this.getColor().asBungee().getName().toUpperCase());
-        json.addProperty("description", this.getDescription());
-
-        JsonObject issuer = new JsonObject();
-        issuer.addProperty("name", this.getIssuerName());
-        issuer.addProperty("class", this.issuerClass.getName().toUpperCase());
-        json.add("issuer", issuer);
-
-        return json;
-    }
-
-    public String getIssuerName() {
-        return issuerName;
+        Gson gson = new Gson();
+        return (JsonObject) gson.toJsonTree(this);
     }
 }

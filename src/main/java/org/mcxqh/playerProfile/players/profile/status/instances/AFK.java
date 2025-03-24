@@ -10,8 +10,8 @@ import static org.mcxqh.playerProfile.events.StatusListener.AFKPlayerListProfile
 import static org.mcxqh.playerProfile.events.StatusListener.activePlayerListProfile;
 
 public class AFK extends Status {
-    private boolean isAFK;
-    private int AFK_TIME;
+    private transient boolean isAFK;
+    private transient int AFK_TIME;
 
     /**
      * This constructor is mostly used for loading player's status setting.

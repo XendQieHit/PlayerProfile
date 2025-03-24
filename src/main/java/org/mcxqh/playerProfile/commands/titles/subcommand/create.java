@@ -8,7 +8,6 @@ import org.mcxqh.playerProfile.Data;
 import org.mcxqh.playerProfile.commands.SubCommand;
 import org.mcxqh.playerProfile.files.FileHandler;
 import org.mcxqh.playerProfile.players.Profile;
-import org.mcxqh.playerProfile.players.profile.title.IssuerClass;
 
 import java.util.List;
 

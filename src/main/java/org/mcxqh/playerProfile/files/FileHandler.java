@@ -8,7 +8,8 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.entity.Player;
 import org.mcxqh.playerProfile.Data;
 import org.mcxqh.playerProfile.players.Profile;
-import org.mcxqh.playerProfile.players.profile.title.IssuerClass;
+import org.mcxqh.playerProfile.players.profile.identity.Identity;
+import org.mcxqh.playerProfile.players.profile.identity.IdentityType;
 import org.mcxqh.playerProfile.players.profile.title.Title;
 import org.mcxqh.playerProfile.players.profile.status.Status;
 
@@ -170,7 +171,6 @@ public class FileHandler {
             }
             titleFile.createNewFile();
 
-            Logger.getLogger("PlayerProfile").info("now creating...");
             BufferedWriter writer = new BufferedWriter(new FileWriter(titleFile));
             JsonArray jsonArray = new JsonArray();
 
@@ -178,14 +178,9 @@ public class FileHandler {
                     "testTitle",
                     org.bukkit.ChatColor.DARK_AQUA,
                     "This is a testing title!\nhi!",
-                    player.getName(),
-                    IssuerClass.PERSONAL
+                    new Identity(IdentityType.PERSONAL, null)
             );
             jsonArray.add(title.toJson());
-
-            Logger.getLogger("PlayerProfile").info("hi");
-            Logger.getLogger("PlayerProfile").info(title.toJson().toString());
-            Logger.getLogger("PlayerProfile").info(jsonArray.toString());
 
             writer.write(jsonArray.toString());
             writer.close();

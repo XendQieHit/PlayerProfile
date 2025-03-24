@@ -1,8 +1,9 @@
-package org.mcxqh.playerProfile.players.profile.title;
+package org.mcxqh.playerProfile.players.profile.identity;
 
+import com.google.gson.JsonObject;
 import org.bukkit.ChatColor;
 
-public enum IssuerClass {
+public enum IdentityType {
     SERVER(0, "Server", "GRAY"),
     OFFICIAL(1, "Official", "RED"),
     GUILD(2, "Guild", "GREEN"),
@@ -14,7 +15,7 @@ public enum IssuerClass {
     private final String name;
     private final String color;
 
-    private IssuerClass(int ordinal, String name, String color) {
+    IdentityType(int ordinal, String name, String color) {
         this.name = name;
         this.ordinal = ordinal;
         this.color = color;
@@ -35,5 +36,12 @@ public enum IssuerClass {
 
     public String getName() {
         return name;
+    }
+
+    public JsonObject toJson() {
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("Name", this.name);
+        jsonObject.addProperty("Color", this.color);
+        return jsonObject;
     }
 }

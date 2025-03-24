@@ -1,12 +1,13 @@
 package org.mcxqh.playerProfile.players.profile;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.mcxqh.playerProfile.files.FileHandler;
-import org.mcxqh.playerProfile.players.profile.title.IssuerClass;
+import org.mcxqh.playerProfile.players.profile.identity.IdentityType;
 import org.mcxqh.playerProfile.players.profile.title.Title;
 
 import java.io.FileNotFoundException;
@@ -38,7 +39,7 @@ public class TitleManager {
     /**
      * Load player's title within json file of title.
      */
-    public void loadTitle() {
+    public void load() {
         JsonArray jsonArray = null;
 
         // Firstly, read json file.
@@ -50,20 +51,12 @@ public class TitleManager {
             throw new RuntimeException();
         }
 
+        // Reading finished. Now setting player's status.
         Logger.getLogger("PlayerProfile").info("Title: " + jsonArray + " Loading Setting...");
-
+        Gson gson = new Gson();
         jsonArray.forEach(jsonElement -> {
             try {
-                JsonObject json = (JsonObject) jsonElement;
-
-                String name = json.get("name").toString();
-                ChatColor color = ChatColor.valueOf(json.get("color").getAsString());
-                String description = json.get("description").getAsString();
-                JsonObject issuer = (JsonObject) json.get("issuer");
-                String issuerName = issuer.get("name").getAsString();
-                IssuerClass issuerClass = IssuerClass.valueOf(issuer.get("class").getAsString());
-
-                titleArrayList.add(new Title(name, color, description, issuerName, issuerClass));
+                titleArrayList.add(gson.fromJson(jsonElement, Title.class));
             } catch (NullPointerException e) {
                 player.spigot().sendMessage(new ComponentBuilder("加载称号失败：" + e).color(net.md_5.bungee.api.ChatColor.RED).create());
                 throw new RuntimeException(e);

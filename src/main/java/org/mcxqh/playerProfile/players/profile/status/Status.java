@@ -1,5 +1,6 @@
 package org.mcxqh.playerProfile.players.profile.status;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.ChatColor;
@@ -13,19 +14,19 @@ import org.mcxqh.playerProfile.players.Profile;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Optional;
 import java.util.logging.Logger;
 
 public abstract class Status {
     protected boolean isDisplay;
     protected boolean isDisplayCustomName;
     protected String customName;
-    protected String name;
     protected ChatColor color;
-    protected ChatColor defaultColor;
-    public Profile profile;
-    public Player player;
-    public final FileConfiguration config = YamlConfiguration.loadConfiguration(new File(new File("plugins/PlayerProfile"),"config.yml"));
+
+    protected transient String name;
+    protected transient ChatColor defaultColor;
+    public transient Profile profile;
+    public transient Player player;
+    public transient final FileConfiguration config = YamlConfiguration.loadConfiguration(new File(new File("plugins/PlayerProfile"),"config.yml"));
 
     public String getRawCustomStatus() {
         return customName;
@@ -74,7 +75,7 @@ public abstract class Status {
     /**
      * Load status within json.
      */
-    public void loadSetting() {
+    public <T extends Status> void load() {
         String statusName = this.getClass().getSimpleName();
         JsonObject json = null;
         // Firstly, read json file.
@@ -87,18 +88,9 @@ public abstract class Status {
         }
 
         // Reading finished. Now setting player's status.
-        Logger.getLogger("PLayerProfile").info("Status: " + json.toString() + " Loading Setting...");
-
-        this.profile = Data.profileMapWithUUID.get(this.player.getUniqueId());
-
-        this.isDisplay = json.get("isDisplay").getAsBoolean();
-        this.isDisplayCustomName = json.get("isDisplayCustomName").getAsBoolean();
-        this.customName = json.has("customName") && !json.get("customName").isJsonNull() ? json.get("customName").getAsString() : null;
-        try {
-            this.color = ChatColor.valueOf(json.get("chatColor").getAsString());
-        } catch (IllegalArgumentException e) {
-            this.player.spigot().sendMessage(new ComponentBuilder("加载状态颜色设置失败: "+ this.getClass().getSimpleName() + ": " + e + "现已还原成初始设置").color(net.md_5.bungee.api.ChatColor.YELLOW).create());
-        }
+        Logger.getLogger("PlayerProfile").info("Status: " + json.toString() + " Loading Setting...");
+        Gson gson = new Gson();
+        ? status = gson.fromJson(json, this.getClass());
     }
     /**
      * This method is for <code>loadSetting()</code>.
@@ -127,7 +119,6 @@ public abstract class Status {
         }
         return json;
     }
-
     private void sendErrorMsg(Exception e, IOException ex) {
         Logger.getLogger("PlayerProfile").severe("读取配置文件失败: " + e);
         this.player.spigot().sendMessage(new ComponentBuilder("读取配置文件失败: " + e).color(net.md_5.bungee.api.ChatColor.RED).create());
@@ -137,20 +128,8 @@ public abstract class Status {
      * Get JsonObject of sub-status.
      */
     public JsonObject toJson() {
-        // {
-        //   this.getClass().getSimpleName(): {
-        //     "isDisplay": isDisplay(),
-        //     "isDisplayCustomName": isDisplayCustomName(),
-        //     "customName": getRawCustomStatus(),
-        //     "chatColor": getChatColor().toString()
-        //   }
-        // }
-        JsonObject json = new JsonObject();
-        json.addProperty("isDisplay", this.isDisplay());
-        json.addProperty("isDisplayCustomName", this.isDisplayCustomName());
-        json.addProperty("customName", this.getRawCustomStatus());
-        json.addProperty("chatColor", Optional.ofNullable(this.getColor()).isPresent() ? this.getColor().asBungee().getName().toUpperCase() : "");
-        return json;
+        Gson gson = new Gson();
+        return (JsonObject) gson.toJsonTree(this);
     }
 
     /**

@@ -75,7 +75,7 @@ public class StatusManager {
      */
     public void loadSetting() {
         for (Status status : statusArrayList) {
-            status.loadSetting();
+            status.load();
         }
     }
 

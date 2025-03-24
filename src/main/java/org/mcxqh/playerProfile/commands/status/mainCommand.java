@@ -99,7 +99,6 @@ public class mainCommand implements TabExecutor {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         Player player = (Player) sender;
-        ArrayList<String> playerNameList = Data.playerNameArrayList;
         if (!args[0].isEmpty()) { // if args is not empty.
 
             if (Data.playerMapWithName.containsKey(args[0])) { // if args contains player's name

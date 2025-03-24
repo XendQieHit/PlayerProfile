@@ -10,7 +10,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.mcxqh.playerProfile.Data;
-import org.mcxqh.playerProfile.PlayerProfile;
 import org.mcxqh.playerProfile.files.FileHandler;
 import org.mcxqh.playerProfile.players.Profile;
 
@@ -46,7 +45,7 @@ public class PlayerJoinListener implements Listener {
         try {
             StatusListener.getActivePlayerList().add(profile);
             Data.playerMapWithUUID.put(player.getUniqueId(), player);
-            Data.playerNameArrayList.add(player.getName());
+            Data.playerNameSet.add(player.getName());
 
             Logger.getLogger("PlayerProfile").info("Add " + player.getName() + " successfully!");
         } catch (ConcurrentModificationException e) {

@@ -48,7 +48,7 @@ public class custom implements SubCommand {
             }
 
             statusManager.saveStatus();
-            status.loadSetting();
+            status.load();
             return true;
         }
         sendUsageMessage(sender);

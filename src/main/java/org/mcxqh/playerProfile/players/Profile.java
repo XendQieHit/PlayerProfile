@@ -7,41 +7,40 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.mcxqh.playerProfile.Data;
-import org.mcxqh.playerProfile.players.profile.title.IssuerClass;
+import org.mcxqh.playerProfile.players.profile.identity.Identity;
 import org.mcxqh.playerProfile.players.profile.title.Title;
 import org.mcxqh.playerProfile.players.profile.StatusManager;
 import org.mcxqh.playerProfile.players.profile.TitleManager;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Logger;
 
 
 public class Profile {
     private final FileConfiguration config = YamlConfiguration.loadConfiguration(new File(new File("plugins/PlayerProfile"),"config.yml"));
+    private final Player player;
     private final UUID uniqueId;
     private final String name;
     private final TitleManager titleManager;
     private final StatusManager statusManager;
-    private final List<IssuerClass> issuerClassList = new ArrayList<>();
-    private final Player player;
+    private final Set<Identity> identities = new HashSet<>();
 
     public Profile(Player player) {
-        this.uniqueId = player.getUniqueId();
-        this.name = player.getName();
-        this.titleManager = new TitleManager(player);
-        this.statusManager = new StatusManager(player);
+        uniqueId = player.getUniqueId();
+        name = player.getName();
+        titleManager = new TitleManager(player);
+        statusManager = new StatusManager(player);
         this.player = player;
 
         // Register on Plugin
         Data.profileMapWithUUID.put(uniqueId, this);
-        Data.playerMapWithName.put(this.name, player);
+        Data.profileMapWithName.put(name, this);
 
-        // Register on Server
+        Data.playerMapWithName.put(name, player);
         Data.playerMapWithUUID.put(player.getUniqueId(), player);
-        Data.playerNameArrayList.add(this.name);
+
+        Data.playerNameSet.add(name);
     }
 
     public StatusManager getStatusManager() {
@@ -133,7 +132,7 @@ public class Profile {
 
     public void loadSetting() {
         this.statusManager.loadSetting();
-        this.titleManager.loadTitle();
+        this.titleManager.load();
     }
 
     public void saveSetting() {
@@ -141,7 +140,7 @@ public class Profile {
         this.titleManager.saveTitle();
     }
 
-    public List<IssuerClass> getIssuerClassList() {
-        return issuerClassList;
+    public Set<Identity> getIdentities() {
+        return identities;
     }
 }

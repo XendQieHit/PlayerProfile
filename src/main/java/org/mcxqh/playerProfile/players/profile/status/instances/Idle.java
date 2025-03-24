@@ -10,8 +10,8 @@ import static org.mcxqh.playerProfile.events.StatusListener.AFKPlayerListProfile
 import static org.mcxqh.playerProfile.events.StatusListener.activePlayerListProfile;
 
 public class Idle extends Status {
-    private boolean isIdle;
-    private int Idle_TIME;
+    private transient boolean isIdle;
+    private transient int Idle_TIME;
 
     /**
      * This constructor is mostly used for loading player's status setting.

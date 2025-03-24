@@ -32,7 +32,7 @@ public final class PlayerProfile extends JavaPlugin {
         }
         if (!Data.playerMapWithUUID.isEmpty()) {
             Data.playerMapWithUUID.forEach((uuid, player) -> {
-                Data.playerNameArrayList.add(player.getName());
+                Data.playerNameSet.add(player.getName());
                 PlayerJoinListener.EventJoinHandler(player);
             });
         }
