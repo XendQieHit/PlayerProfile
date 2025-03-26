@@ -14,17 +14,15 @@ public class AFK extends Status {
     private transient int AFK_TIME;
 
     /**
-     * This constructor is mostly used for loading player's status setting.
+     * This constructor is mostly used for generate new default status setting.
      */
     public AFK(Player player) {
-        this.player = player;
+        super((byte) 0, ChatColor.DARK_GRAY, player);
         this.isAFK = false;
         this.AFK_TIME = 0;
-        this.customName = null;
-        this.defaultColor = ChatColor.DARK_GRAY;
+        this.customName = "";
         this.color = defaultColor;
         this.isDisplayCustomName = false;
-        this.name = defaultColor + "AFK[挂机]" + ChatColor.RESET;
     }
 
     public int getAFK_TIME() {
@@ -55,6 +53,7 @@ public class AFK extends Status {
         return ChatColor.DARK_GRAY + "[AFK]" + ChatColor.RESET;
     }
 
+    @Override
     public boolean now() {
         Idle idle = profile.getStatusManager().getIdle();
         // set AFK status

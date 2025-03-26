@@ -17,14 +17,12 @@ public class Idle extends Status {
      * This constructor is mostly used for loading player's status setting.
      */
     public Idle(Player player) {
-        this.player = player;
+        super((byte) 1, ChatColor.WHITE, player);
         this.isIdle = true;
         this.Idle_TIME = 0;
-        this.customName = null;
-        this.defaultColor = ChatColor.WHITE;
+        this.customName = "";
         this.color = defaultColor;
         this.isDisplayCustomName = false;
-        this.name = defaultColor + "Idle[闲置]" + ChatColor.RESET;
     }
 
     public boolean isIdle() {

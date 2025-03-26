@@ -96,6 +96,14 @@ public abstract class Collective {
                 .toList();
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public Profile getLeader() {
         return leader;
     }

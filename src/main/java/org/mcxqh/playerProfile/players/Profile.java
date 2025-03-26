@@ -15,6 +15,7 @@ import org.mcxqh.playerProfile.players.profile.TitleManager;
 import java.io.File;
 import java.util.*;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 
 public class Profile {
@@ -49,6 +50,15 @@ public class Profile {
 
     public TitleManager getTitleManager() {
         return titleManager;
+    }
+
+    public Set<Identity> getIdentities() {
+        return identities;
+    }
+
+    public List<String> getIdentitiesAsStringList() {
+        Stream<Identity> stream = identities.stream();
+        stream.map(e -> e.getCollective().get)
     }
 
     public UUID getUniqueId() {
@@ -131,16 +141,12 @@ public class Profile {
     }
 
     public void loadSetting() {
-        this.statusManager.loadSetting();
+        this.statusManager.load();
         this.titleManager.load();
     }
 
     public void saveSetting() {
         this.statusManager.saveStatus();
         this.titleManager.saveTitle();
-    }
-
-    public Set<Identity> getIdentities() {
-        return identities;
     }
 }

@@ -14,6 +14,7 @@ import org.mcxqh.playerProfile.players.profile.title.Title;
 import org.mcxqh.playerProfile.players.profile.status.Status;
 
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Logger;
 
 public class FileHandler {
@@ -24,6 +25,39 @@ public class FileHandler {
     private final File titleFolder = new File(rootFolder, "Title");
 
     public FileHandler() {}
+
+    /**
+     * Get player's status setting, which is configured by this player.
+     * If there isn't exist json type of config file, this will also create new one.
+     */
+    public JsonArray getStatus(Player player) {
+        JsonArray jsonArray = null;
+        for (int i = 0; i < 2; i++) {
+            FileHandler fileHandler = new FileHandler();
+            try {
+                jsonArray = fileHandler.getStatusRaw(player);
+                break;
+            } catch (NullPointerException e) {
+                try {
+                    fileHandler.resetStatus(player);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            } catch (FileNotFoundException e) {
+                try {
+                    fileHandler.createStatus(player);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        }
+        if (jsonArray == null || jsonArray.isEmpty()) {
+            Logger.getLogger("PlayerProfile").info("获取状态配置文件失败");
+            player.spigot().sendMessage(new ComponentBuilder("获取状态配置文件失败").color(ChatColor.RED).create());
+            throw new NullPointerException();
+        }
+        return jsonArray;
+    }
 
     /**
      * Create a preprocessing status file. This method usually applied in command executor.
@@ -44,35 +78,37 @@ public class FileHandler {
 
             // Initialize status file
             BufferedWriter writer = new BufferedWriter(new FileWriter(statusFile));
-            JsonObject json = new JsonObject();
+            JsonArray json = new JsonArray();
 
-            for (Status status : profile.getStatusManager().getAllSubStatuses()) {
-                json.add(status.getClass().getSimpleName(), status.toJson());
+            Gson gson = new Gson();
+
+            for (Class<? extends Status> statusClass : profile.getStatusManager().getStatusClassArrayList()) {
+                JsonObject status = new JsonObject();
+                try {
+                    status.addProperty(statusClass.getSimpleName(), gson.toJson(statusClass.getDeclaredConstructor().newInstance()));
+                } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                         NoSuchMethodException e) {
+                    throw new RuntimeException(e);
+                }
+                json.add(gson.toJson(status));
             }
             writer.write(json.toString());
             writer.close();
         }
     }
 
-    /**
-     * Get player's status setting, which is configured by this player.
-     * If there isn't exist json type of config file, this will also create new one.
-     */
-    public JsonObject getStatus(Player player) throws FileNotFoundException {
+
+    public JsonArray getStatusRaw(Player player) throws FileNotFoundException, NullPointerException {
         String fileName = player.getName() + "@" + player.getUniqueId() + ".json";
         File statusSettingFile = new File(statusFolder, fileName);
 
         Gson gson = new Gson();
         JsonReader reader = new JsonReader(new FileReader(statusSettingFile));
-        JsonObject json = gson.fromJson(reader, JsonObject.class);
-        if (json == null || json.isEmpty()) {
-            try {
-                resetStatus(player);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+        JsonArray jsonArray = gson.fromJson(reader, JsonArray.class);
+        if (jsonArray == null || jsonArray.isEmpty()) {
+            throw new NullPointerException();
         }
-        return json;
+        return jsonArray;
     }
 
     /**
@@ -259,6 +295,7 @@ public class FileHandler {
      * But it's need to provide an executor.
      */
 
+/*
     public void createStatus(Player executor, Player player) {
         try {
 
@@ -271,16 +308,9 @@ public class FileHandler {
     }
 
     public JsonObject getStatus(Player executor, Player player) {
-        JsonObject jsonObject = new JsonObject();
-        try {
+        JsonObject jsonObject = getStatus(player);
+        executor.spigot().sendMessage(new ComponentBuilder("获取状态文件").color(ChatColor.YELLOW).create());
 
-            jsonObject = getStatus(player);
-
-            executor.spigot().sendMessage(new ComponentBuilder("获取状态文件").color(ChatColor.YELLOW).create());
-        } catch (FileNotFoundException e) {
-            executor.spigot().sendMessage(new ComponentBuilder("你不应该能见到这个报错信息，如果有，跟腐竹说PlayerProfile插件出问题了: " + e).color(ChatColor.RED).create());
-
-        }
         return jsonObject;
     }
 
@@ -309,10 +339,12 @@ public class FileHandler {
         }
     }
 
-    /**
+    */
+/**
      * Create a json file of module profile for this player.
      * If this player has already had profile json file, this method will not execute.
-     */
+     *//*
+
     public void createProfile(Player executor, Player player) {
         try {
 
@@ -324,9 +356,11 @@ public class FileHandler {
         }
     }
 
-    /**
+    */
+/**
      * Get player's profile from corresponding json file. Use in command processing.
-     */
+     *//*
+
     public JsonObject getProfile(Player executor, Player player) {
         JsonObject jsonObject;
         try {
@@ -340,9 +374,11 @@ public class FileHandler {
         return jsonObject;
     }
 
-    /**
+    */
+/**
      * Get player's title from profile. Use in command processing.
-     */
+     *//*
+
     public JsonArray getTitle(Player executor, Player player) {
         JsonArray jsonArray;
         try {
@@ -356,9 +392,11 @@ public class FileHandler {
         return jsonArray;
     }
 
-    /**
+    */
+/**
      * Reset player's profile. This method just implement delete and call <code>createProfile</code> method。
-     */
+     *//*
+
     public void resetProfile(Player executor, Player player) {
         try {
 
@@ -371,9 +409,11 @@ public class FileHandler {
         executor.spigot().sendMessage(new ComponentBuilder("称号重置成功！").color(ChatColor.YELLOW).create());
     }
 
-    /**
+    */
+/**
      * Write JsonObject in profile json file。
-     */
+     *//*
+
     public void saveProfile(Player executor, Player player, JsonObject profile) {
         try {
 
@@ -386,3 +426,4 @@ public class FileHandler {
         }
     }
 }
+*/

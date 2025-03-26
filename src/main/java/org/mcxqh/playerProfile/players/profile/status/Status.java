@@ -1,6 +1,8 @@
 package org.mcxqh.playerProfile.players.profile.status;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.ChatColor;
@@ -8,6 +10,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.mcxqh.playerProfile.Data;
+import org.mcxqh.playerProfile.Utils;
 import org.mcxqh.playerProfile.files.FileHandler;
 import org.mcxqh.playerProfile.players.Profile;
 
@@ -22,11 +25,19 @@ public abstract class Status {
     protected String customName;
     protected ChatColor color;
 
-    protected transient String name;
-    protected transient ChatColor defaultColor;
-    public transient Profile profile;
-    public transient Player player;
-    public transient final FileConfiguration config = YamlConfiguration.loadConfiguration(new File(new File("plugins/PlayerProfile"),"config.yml"));
+    protected final byte id;
+    protected final transient ChatColor defaultColor;
+    public final transient Profile profile;
+    public final transient Player player;
+
+    public final transient FileConfiguration config = YamlConfiguration.loadConfiguration(new File(new File("plugins/PlayerProfile"),"config.yml"));
+
+    public Status(byte id, ChatColor defaultColor, Player player) {
+        this.id = id;
+        this.defaultColor = defaultColor;
+        this.player = player;
+        this.profile = Data.profileMapWithUUID.get(player.getUniqueId());
+    }
 
     public String getRawCustomStatus() {
         return customName;
@@ -77,51 +88,21 @@ public abstract class Status {
      */
     public <T extends Status> void load() {
         String statusName = this.getClass().getSimpleName();
-        JsonObject json = null;
         // Firstly, read json file.
-        json = getStatusWithTry(json);
+        FileHandler fileHandler = new FileHandler();
+        JsonArray jsonArray = fileHandler.getStatus(player);
+        Gson gson = new Gson();
 
-        if (json == null) {
-            Logger.getLogger("PlayerProfile").severe("无法获取文件");
-            this.player.spigot().sendMessage(new ComponentBuilder("无法获取文件").color(net.md_5.bungee.api.ChatColor.RED).create());
-            throw new RuntimeException();
-        }
+        JsonObject json = gson.fromJson(jsonArray.get(id), JsonObject.class);
+
+        this.isDisplay = json.get("isDisplay").getAsBoolean();
+        this.isDisplayCustomName = json.get("isDisplayCustomName").getAsBoolean();
+        this.color = Utils.valueOfChatColor(json.get("color").getAsString());
+        this.customName = json.get("customName").getAsString();
+
 
         // Reading finished. Now setting player's status.
         Logger.getLogger("PlayerProfile").info("Status: " + json.toString() + " Loading Setting...");
-        Gson gson = new Gson();
-        ? status = gson.fromJson(json, this.getClass());
-    }
-    /**
-     * This method is for <code>loadSetting()</code>.
-     */
-    private JsonObject getStatusWithTry(JsonObject json) {
-        FileHandler fileHandler = new FileHandler();
-        for (int attempt = 0; attempt < 2; attempt++) {
-            try {
-                json = fileHandler.getStatus(this.player).getAsJsonObject(this.getClass().getSimpleName());
-                break;
-            } catch (FileNotFoundException e) {
-                try {
-                    fileHandler.createStatus(this.player);
-                } catch (IOException ex) {
-                    sendErrorMsg(e, ex);
-                    throw new RuntimeException(ex);
-                }
-            } catch (NullPointerException e) {
-                try {
-                    fileHandler.resetStatus(this.player);
-                } catch (IOException ex) {
-                    sendErrorMsg(e, ex);
-                    throw new RuntimeException(ex);
-                }
-            }
-        }
-        return json;
-    }
-    private void sendErrorMsg(Exception e, IOException ex) {
-        Logger.getLogger("PlayerProfile").severe("读取配置文件失败: " + e);
-        this.player.spigot().sendMessage(new ComponentBuilder("读取配置文件失败: " + e).color(net.md_5.bungee.api.ChatColor.RED).create());
     }
 
     /**
@@ -137,7 +118,7 @@ public abstract class Status {
      * @return String Composed of decorated symbol, ChatColor and raw custom status name
      * */
     public String getName() {
-        return this.name;
+        return defaultColor + this.getClass().getSimpleName() + ChatColor.RESET;
     }
 
     /**
