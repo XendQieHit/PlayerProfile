@@ -26,6 +26,16 @@ public class Group extends Collective {
         return managerMap;
     }
 
+    public String verify(UUID uuid) {
+        if (memberMap.containsKey(uuid)) {
+            if (managerMap.containsKey(uuid)) {
+                return "Manager";
+            }
+            return "Member";
+        }
+        return null;
+    }
+
     public void removeFromManager(String playerName) {
 
     }

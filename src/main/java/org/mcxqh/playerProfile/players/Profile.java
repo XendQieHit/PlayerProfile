@@ -56,9 +56,16 @@ public class Profile {
         return identities;
     }
 
+    /**
+     * Get String List of Identities in the format that <code>%s.%s</code>.
+     * For example, Identity
+     */
     public List<String> getIdentitiesAsStringList() {
-        Stream<Identity> stream = identities.stream();
-        stream.map(e -> e.getCollective().get)
+        return identities.stream()
+                .map(e -> String.format("%s.%s.%s",
+                        e.getCollective().getClass().getSimpleName(),
+                        e.getCollective().getName()))
+                .toList();
     }
 
     public UUID getUniqueId() {

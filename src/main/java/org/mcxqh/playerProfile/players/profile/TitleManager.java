@@ -2,12 +2,9 @@ package org.mcxqh.playerProfile.players.profile;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import net.md_5.bungee.api.chat.ComponentBuilder;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.mcxqh.playerProfile.files.FileHandler;
-import org.mcxqh.playerProfile.players.profile.identity.IdentityType;
 import org.mcxqh.playerProfile.players.profile.title.Title;
 
 import java.io.FileNotFoundException;

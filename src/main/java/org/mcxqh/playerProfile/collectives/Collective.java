@@ -2,13 +2,10 @@ package org.mcxqh.playerProfile.collectives;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
 import org.bukkit.entity.Player;
 import org.mcxqh.playerProfile.Data;
 import org.mcxqh.playerProfile.players.Profile;
 
-import java.io.FileWriter;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -20,7 +17,7 @@ public abstract class Collective {
     protected String name;
     protected final Map<UUID, String> memberMap = new ConcurrentHashMap<>();
     protected final Map<String, UUID> reverseMemberMap = new ConcurrentHashMap<>();
-    protected Profile leader;
+    protected UUID leader;
 
     public void addMember(Player player) {
         memberMap.put(player.getUniqueId(), player.getName());
@@ -104,11 +101,11 @@ public abstract class Collective {
         this.name = name;
     }
 
-    public Profile getLeader() {
+    public UUID getLeader() {
         return leader;
     }
 
-    public void setLeader(Profile leader) {
+    public void setLeader(UUID leader) {
         this.leader = leader;
     }
 
@@ -116,6 +113,8 @@ public abstract class Collective {
         Gson gson = new Gson();
         return (JsonObject) gson.toJsonTree(this);
     }
+
+    abstract public void
 
     abstract public void save();
 

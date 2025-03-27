@@ -9,7 +9,6 @@ import org.bukkit.entity.Player;
 import org.mcxqh.playerProfile.Data;
 import org.mcxqh.playerProfile.players.Profile;
 import org.mcxqh.playerProfile.players.profile.identity.Identity;
-import org.mcxqh.playerProfile.players.profile.identity.IdentityType;
 import org.mcxqh.playerProfile.players.profile.title.Title;
 import org.mcxqh.playerProfile.players.profile.status.Status;
 
@@ -214,7 +213,7 @@ public class FileHandler {
                     "testTitle",
                     org.bukkit.ChatColor.DARK_AQUA,
                     "This is a testing title!\nhi!",
-                    new Identity(IdentityType.PERSONAL, null)
+                    new Identity(null)
             );
             jsonArray.add(title.toJson());
 

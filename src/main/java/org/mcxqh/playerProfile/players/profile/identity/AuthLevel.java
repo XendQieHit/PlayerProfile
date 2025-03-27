@@ -3,7 +3,7 @@ package org.mcxqh.playerProfile.players.profile.identity;
 import com.google.gson.JsonObject;
 import org.bukkit.ChatColor;
 
-public enum IdentityType {
+public enum AuthLevel {
     SERVER(0, "Server", "GRAY"),
     OFFICIAL(1, "Official", "RED"),
     GUILD(2, "Guild", "GREEN"),
@@ -15,7 +15,7 @@ public enum IdentityType {
     private final String name;
     private final String color;
 
-    IdentityType(int ordinal, String name, String color) {
+    AuthLevel(int ordinal, String name, String color) {
         this.name = name;
         this.ordinal = ordinal;
         this.color = color;

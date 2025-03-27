@@ -6,9 +6,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.mcxqh.playerProfile.Data;
 import org.mcxqh.playerProfile.commands.SubCommand;
-import org.mcxqh.playerProfile.players.Profile;
 import org.mcxqh.playerProfile.players.profile.identity.Identity;
-import org.mcxqh.playerProfile.players.profile.identity.IdentityType;
+import org.mcxqh.playerProfile.players.profile.identity.AuthLevel;
 import org.mcxqh.playerProfile.players.profile.title.Title;
 
 import java.util.List;
@@ -25,7 +24,7 @@ public class award implements SubCommand {
         Set<Identity> identities;
         if (args.length >= 5) {
             try {
-                identityType = IdentityType.valueOf(args[5].toUpperCase());
+                identityType = AuthLevel.valueOf(args[5].toUpperCase());
             } catch (IllegalArgumentException e) {
                 sender.spigot().sendMessage(new ComponentBuilder("颁发身份参数错误，应为：").color(ChatColor.RED.asBungee()).create());
                 return true;
@@ -36,7 +35,7 @@ public class award implements SubCommand {
                 identities = Data.profileMapWithUUID.get(((Player) sender).getUniqueId()).getIdentities();
 
             } else {
-                identityType = IdentityType.SERVER;
+                identityType = AuthLevel.SERVER;
             }
         }
 
