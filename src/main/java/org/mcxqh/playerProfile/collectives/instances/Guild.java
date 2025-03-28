@@ -7,7 +7,14 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Guild extends Collective {
-    private final Map<UUID, String> managerMap = new ConcurrentHashMap<>();
 
+    @Override
+    public void save() {
 
+    }
+
+    @Override
+    public void load() {
+
+    }
 }

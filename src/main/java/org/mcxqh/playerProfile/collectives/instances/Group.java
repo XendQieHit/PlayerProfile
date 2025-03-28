@@ -5,8 +5,6 @@ import org.mcxqh.playerProfile.collectives.Collective;
 import java.util.*;
 
 public class Group extends Collective {
-    private final Map<UUID, String> managerMap = new HashMap<>();
-    private final Map<String, UUID> reverseManagerMap = new HashMap<>();
     private boolean isOfficial;
 
     public Group(String name) {
@@ -22,18 +20,14 @@ public class Group extends Collective {
         isOfficial = official;
     }
 
-    public Map<UUID, String> getManagerMap() {
-        return managerMap;
+    @Override
+    public void save() {
+
     }
 
-    public String verify(UUID uuid) {
-        if (memberMap.containsKey(uuid)) {
-            if (managerMap.containsKey(uuid)) {
-                return "Manager";
-            }
-            return "Member";
-        }
-        return null;
+    @Override
+    public void load() {
+
     }
 
     public void removeFromManager(String playerName) {

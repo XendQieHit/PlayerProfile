@@ -64,7 +64,8 @@ public class Profile {
         return identities.stream()
                 .map(e -> String.format("%s.%s.%s",
                         e.getCollective().getClass().getSimpleName(),
-                        e.getCollective().getName()))
+                        e.getCollective().getName())),
+                        e.getLevel()
                 .toList();
     }
 

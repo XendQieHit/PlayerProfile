@@ -16,50 +16,14 @@ public abstract class Collective {
      */
     protected String name;
     protected final Map<UUID, String> memberMap = new ConcurrentHashMap<>();
-    protected final Map<String, UUID> reverseMemberMap = new ConcurrentHashMap<>();
+    protected final Map<UUID, String> managerMap = new ConcurrentHashMap<>();
     protected UUID leader;
 
     public void addMember(Player player) {
         memberMap.put(player.getUniqueId(), player.getName());
-        reverseMemberMap.put(player.getName(), player.getUniqueId());
     }
     public void addMember(Profile profile) {
         memberMap.put(profile.getUniqueId(), profile.getName());
-        reverseMemberMap.put(profile.getName(), profile.getUniqueId());
-    }
-
-    /**
-     * Get member's <code>Profile</code> object.
-     * @return <code>null</code> if this member doesn't exist.
-     */
-    public Profile getMemberAsProfile(UUID uuid) {
-        if (memberMap.containsKey(uuid)) {
-            return Data.profileMapWithUUID.get(uuid);
-        }
-        return null;
-    }
-    public Profile getMemberAsProfile(String playerName) {
-        if (reverseMemberMap.containsKey(playerName)) {
-            return Data.profileMapWithName.get(playerName);
-        }
-        return null;
-    }
-
-    /**
-     * Get member's <code>Player</code> object.
-     * @return <code>null</code> if this member doesn't exist.
-     */
-    public Player getMemberAsPlayer(UUID uuid) {
-        if (memberMap.containsKey(uuid)) {
-            return Data.playerMapWithUUID.get(uuid);
-        }
-        return null;
-    }
-    public Player getMemberAsPlayer(String playerName) {
-        if (reverseMemberMap.containsKey(playerName)) {
-            return Data.playerMapWithName.get(playerName);
-        }
-        return null;
     }
 
     public Map<UUID, String> getMemberMap() {
@@ -114,7 +78,19 @@ public abstract class Collective {
         return (JsonObject) gson.toJsonTree(this);
     }
 
-    abstract public void
+    public String verify(UUID uuid) {
+        if (memberMap.containsKey(uuid)) {
+            if (managerMap.containsKey(uuid)) {
+                return "Manager";
+            }
+            return "Member";
+        }
+        return null;
+    }
+
+    public Map<UUID, String> getManagerMap() {
+        return managerMap;
+    }
 
     abstract public void save();
 

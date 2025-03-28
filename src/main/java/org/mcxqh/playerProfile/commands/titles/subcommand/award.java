@@ -24,9 +24,10 @@ public class award implements SubCommand {
         Set<Identity> identities;
         if (args.length >= 5) {
             try {
-                identityType = AuthLevel.valueOf(args[5].toUpperCase());
+                AuthLevel authLevel = AuthLevel.valueOf(args[5].toUpperCase());
+
             } catch (IllegalArgumentException e) {
-                sender.spigot().sendMessage(new ComponentBuilder("颁发身份参数错误，应为：").color(ChatColor.RED.asBungee()).create());
+                sender.spigot().sendMessage(new ComponentBuilder("颁发身份参数错误，格式应为：集体类型.集体名称.你的职位").color(ChatColor.RED.asBungee()).create());
                 return true;
             }
         } else {
