@@ -7,6 +7,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.mcxqh.playerProfile.Data;
+import org.mcxqh.playerProfile.players.profile.IdentityManager;
 import org.mcxqh.playerProfile.players.profile.identity.Identity;
 import org.mcxqh.playerProfile.players.profile.title.Title;
 import org.mcxqh.playerProfile.players.profile.StatusManager;
@@ -25,14 +26,17 @@ public class Profile {
     private final String name;
     private final TitleManager titleManager;
     private final StatusManager statusManager;
-    private final Set<Identity> identities = new HashSet<>();
+    private final IdentityManager identityManager;
+
 
     public Profile(Player player) {
+        this.player = player;
         uniqueId = player.getUniqueId();
         name = player.getName();
+
         titleManager = new TitleManager(player);
         statusManager = new StatusManager(player);
-        this.player = player;
+        identityManager = new IdentityManager(player);
 
         // Register on Plugin
         Data.profileMapWithUUID.put(uniqueId, this);
@@ -52,21 +56,8 @@ public class Profile {
         return titleManager;
     }
 
-    public Set<Identity> getIdentities() {
-        return identities;
-    }
-
-    /**
-     * Get String List of Identities in the format that <code>%s.%s</code>.
-     * For example, Identity
-     */
-    public List<String> getIdentitiesAsStringList() {
-        return identities.stream()
-                .map(e -> String.format("%s.%s.%s",
-                        e.getCollective().getClass().getSimpleName(),
-                        e.getCollective().getName())),
-                        e.getLevel()
-                .toList();
+    public IdentityManager getIdentityManager() {
+        return identityManager;
     }
 
     public UUID getUniqueId() {

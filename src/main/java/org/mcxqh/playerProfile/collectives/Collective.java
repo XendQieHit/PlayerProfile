@@ -5,6 +5,10 @@ import com.google.gson.JsonObject;
 import org.bukkit.entity.Player;
 import org.mcxqh.playerProfile.Data;
 import org.mcxqh.playerProfile.players.Profile;
+import org.mcxqh.playerProfile.players.profile.IdentityManager;
+import org.mcxqh.playerProfile.players.profile.identity.AuthLevel;
+import org.mcxqh.playerProfile.players.profile.identity.Identity;
+import org.mcxqh.playerProfile.players.profile.identity.IdentityLevel;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -15,15 +19,39 @@ public abstract class Collective {
      * If you want to get member as Profile, you need to convert it or use <code>getMemberAsProfile</code>
      */
     protected String name;
+    protected AuthLevel authLevel;
     protected final Map<UUID, String> memberMap = new ConcurrentHashMap<>();
     protected final Map<UUID, String> managerMap = new ConcurrentHashMap<>();
     protected UUID leader;
 
-    public void addMember(Player player) {
-        memberMap.put(player.getUniqueId(), player.getName());
+    public void add(Player player) {
+        add(Data.profileMapWithUUID.get(player.getUniqueId()));
     }
-    public void addMember(Profile profile) {
+    public void add(Profile profile) {
         memberMap.put(profile.getUniqueId(), profile.getName());
+        profile.getIdentityManager().addIdentity(Identity.of(this.authLevel, profile.getUniqueId(), this));
+    }
+
+    public void addManager(Player player) {
+        addManager(Data.profileMapWithUUID.get(player.getUniqueId()));
+    }
+    public void addManager(Profile profile) {
+        managerMap.put(profile.getUniqueId(), profile.getName());
+        profile.getIdentityManager().addIdentity(Identity.of(this.authLevel, profile.getUniqueId(), this));
+    }
+
+    public void remove(Player player) {
+        remove(Data.profileMapWithUUID.get(player.getUniqueId()));
+    }
+    public void remove(Profile profile) {
+        UUID uuid = profile.getUniqueId();
+        memberMap.remove(uuid);
+        IdentityManager identityManager = profile.getIdentityManager();
+        identityManager.removeIdentity(Identity.of(this.authLevel, uuid, this));
+        if (managerMap.containsKey(uuid)) {
+            managerMap.remove(uuid);
+            identityManager.removeIdentity();
+        }
     }
 
     public Map<UUID, String> getMemberMap() {
@@ -78,14 +106,17 @@ public abstract class Collective {
         return (JsonObject) gson.toJsonTree(this);
     }
 
-    public String verify(UUID uuid) {
-        if (memberMap.containsKey(uuid)) {
-            if (managerMap.containsKey(uuid)) {
-                return "Manager";
-            }
-            return "Member";
+    public IdentityLevel verify(UUID uuid) {
+        if (!memberMap.containsKey(uuid)) {
+            return null;
         }
-        return null;
+        if (managerMap.containsKey(uuid)) {
+            return IdentityLevel.MANAGER;
+        }
+        if (leader.equals(uuid)) {
+            return IdentityLevel.LEADER;
+        }
+        return IdentityLevel.MEMBER;
     }
 
     public Map<UUID, String> getManagerMap() {

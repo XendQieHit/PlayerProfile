@@ -8,6 +8,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Data {
+    // Normally, map with name is usually used in Player-oriented operation, such as command input.
     public static final Map<UUID, Profile> profileMapWithUUID = new ConcurrentHashMap<>();
     public static final Map<String, Profile> profileMapWithName = new ConcurrentHashMap<>();
 

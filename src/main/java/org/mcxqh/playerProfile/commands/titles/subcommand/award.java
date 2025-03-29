@@ -6,12 +6,18 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.mcxqh.playerProfile.Data;
 import org.mcxqh.playerProfile.commands.SubCommand;
+import org.mcxqh.playerProfile.commands.titles.mainCommand;
+import org.mcxqh.playerProfile.players.Profile;
+import org.mcxqh.playerProfile.players.profile.IdentityManager;
 import org.mcxqh.playerProfile.players.profile.identity.Identity;
 import org.mcxqh.playerProfile.players.profile.identity.AuthLevel;
 import org.mcxqh.playerProfile.players.profile.title.Title;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class award implements SubCommand {
 
@@ -21,19 +27,26 @@ public class award implements SubCommand {
     @Override
     public boolean run(CommandSender sender, Player player, String[] args) {
 
-        Set<Identity> identities;
-        if (args.length >= 5) {
-            try {
-                AuthLevel authLevel = AuthLevel.valueOf(args[5].toUpperCase());
+        Data.profileMapWithName.get(args[0])
+        if (Data.playerMapWithName.containsKey(args[0])) {
+            Data.playerMapWithName.get(args[0]);
+        }
 
-            } catch (IllegalArgumentException e) {
-                sender.spigot().sendMessage(new ComponentBuilder("颁发身份参数错误，格式应为：集体类型.集体名称.你的职位").color(ChatColor.RED.asBungee()).create());
-                return true;
+        Profile profile = Data.profileMapWithUUID.get(player.getUniqueId());
+        IdentityManager identityManager = profile.getIdentityManager();
+        List<String> identityStringList = identityManager.getIdentitiesAsStringList();
+
+        // For identity supplied
+        if (args.length >= 5 && identityStringList.contains(args[4])) {
+            int i = identityStringList.indexOf(args[4]);
+            Identity identity = identityManager.getIdentities().stream().toList().get(i);
+            if (identity.verify()) {
+
             }
         } else {
             // 这里还要加个身份验证程序，啊啊啊好麻烦啊啊啊——————
             if (sender instanceof Player) {
-                identities = Data.profileMapWithUUID.get(((Player) sender).getUniqueId()).getIdentities();
+
 
             } else {
                 identityType = AuthLevel.SERVER;
@@ -50,6 +63,20 @@ public class award implements SubCommand {
 
     @Override
     public List<String> tab(String[] args, Player player) {
+        Profile profile = Data.profileMapWithUUID.get(player.getUniqueId());
+        List<Identity> identities = profile.getIdentities().stream().toList();
+
+        switch (args.length) {
+            case 1 -> { // Player
+                return mainCommand.pair(args[0], Data.playerMapWithName.keySet().stream().toList());
+            }
+            case 3 -> { // Color
+                return mainCommand.pair(args[2], Arrays.stream(ChatColor.values()).map(Enum::name).toList());
+            }
+            case 5 -> { // IssuerClass
+                return mainCommand.pair(args[4], identities.stream().map(Identity::toString).toList());
+            }
+        }
         return List.of();
     }
 }
