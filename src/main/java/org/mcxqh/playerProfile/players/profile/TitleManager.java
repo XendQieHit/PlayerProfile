@@ -16,6 +16,7 @@ public class TitleManager {
     private final Player player;
     private Title presentTitle;
     private final ArrayList<Title> titleArrayList = new ArrayList<>();
+    private final ArrayList<String> titleStringArrayList = new ArrayList<>();
 
     public TitleManager(Player player) {
         this.player = player;
@@ -31,16 +32,31 @@ public class TitleManager {
 
     public void addTitle(Title title) {
         titleArrayList.add(title);
+        titleStringArrayList.add(title.toString());
+    }
+
+    public void removeTitle(Title title) {
+        titleArrayList.remove(title);
+        titleStringArrayList.remove(title.toString());
+    }
+
+    public ArrayList<Title> getTitleArrayList() {
+        return titleArrayList;
+    }
+
+    public ArrayList<String> getTitleStringArrayList() {
+        return titleStringArrayList;
     }
 
     /**
      * Load player's title within json file of title.
      */
     public void load() {
+        FileHandler fileHandler = new FileHandler();
         JsonArray jsonArray = null;
 
         // Firstly, read json file.
-        jsonArray = getTitleWithTry(jsonArray);
+        jsonArray = fileHandler.getTitle(player);
 
         if (jsonArray == null) {
             Logger.getLogger("PlayerProfile").severe("无法获取文件");
@@ -59,38 +75,6 @@ public class TitleManager {
                 throw new RuntimeException(e);
             }
         });
-    }
-    /**
-     * This method is for <code>loadTitle()</code>.
-     */
-    private JsonArray getTitleWithTry(JsonArray jsonArray) {
-        FileHandler fileHandler = new FileHandler();
-        for (int attempt = 0; attempt < 2; attempt++) {
-            Logger.getLogger("PlayerProfile").info("This is in" + attempt + "try...");
-            try {
-                jsonArray = fileHandler.getTitle(this.player);
-                break;
-            } catch (FileNotFoundException e) {
-                try {
-                    fileHandler.createTitle(this.player);
-                } catch (IOException ex) {
-                    sendErrorMsg(e, ex);
-                    throw new RuntimeException(ex);
-                }
-            } catch (NullPointerException e) {
-                try {
-                    fileHandler.resetTitle(this.player);
-                } catch (IOException ex) {
-                    sendErrorMsg(e, ex);
-                    throw new RuntimeException(ex);
-                }
-            }
-        }
-        return jsonArray;
-    }
-    private void sendErrorMsg(Exception e, IOException ex) {
-        Logger.getLogger("PlayerProfile").severe("读取称号配置文件失败: " + e);
-        this.player.spigot().sendMessage(new ComponentBuilder("读取称号配置文件失败: " + e).color(net.md_5.bungee.api.ChatColor.RED).create());
     }
 
     /**

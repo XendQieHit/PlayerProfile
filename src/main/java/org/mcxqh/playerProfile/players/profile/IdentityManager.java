@@ -8,8 +8,9 @@ import java.util.List;
 import java.util.Set;
 
 public class IdentityManager {
-    private final Set<Identity> identities = new HashSet<>();
     private final Player player;
+    private final Set<Identity> identities = new HashSet<>();
+    private Identity presentIdentity = null;
 
     public IdentityManager(Player player) {
         this.player = player;
@@ -17,6 +18,14 @@ public class IdentityManager {
 
     public Set<Identity> getIdentities() {
         return identities;
+    }
+
+    public Identity getPresentIdentity() {
+        return presentIdentity;
+    }
+
+    public void setPresentIdentity(Identity identity) {
+        presentIdentity = identity;
     }
 
     public void addIdentity(Identity identity) {

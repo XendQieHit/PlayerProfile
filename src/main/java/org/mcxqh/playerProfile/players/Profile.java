@@ -8,7 +8,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.mcxqh.playerProfile.Data;
 import org.mcxqh.playerProfile.players.profile.IdentityManager;
-import org.mcxqh.playerProfile.players.profile.identity.Identity;
 import org.mcxqh.playerProfile.players.profile.title.Title;
 import org.mcxqh.playerProfile.players.profile.StatusManager;
 import org.mcxqh.playerProfile.players.profile.TitleManager;
@@ -16,7 +15,6 @@ import org.mcxqh.playerProfile.players.profile.TitleManager;
 import java.io.File;
 import java.util.*;
 import java.util.logging.Logger;
-import java.util.stream.Stream;
 
 
 public class Profile {
@@ -87,7 +85,7 @@ public class Profile {
         // Get Title
         Title presentTitle = titleManager.getPresentTitle();
         if (presentTitle != null && presentTitle.getName() != null) {
-            componentBuilder.append(presentTitle.getTitle());
+            componentBuilder.append(presentTitle.toBaseComponent());
         }
 
         switch (config.getInt("title.title-style")) {

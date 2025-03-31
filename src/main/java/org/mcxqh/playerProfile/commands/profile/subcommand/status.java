@@ -10,12 +10,12 @@ import java.util.logging.Logger;
 
 public class status implements SubCommand {
     @Override
-    public boolean run(CommandSender sender, Player player, String[] args) {
+    public boolean run(CommandSender sender, Player operatorPlayer, String[] args) {
         StringBuilder argsC = new StringBuilder();
         for (String s : args) {
             argsC.append(" ").append(s);
         }
-        return player.performCommand("status " + argsC);
+        return operatorPlayer.performCommand("status " + argsC);
     }
 
     @Override

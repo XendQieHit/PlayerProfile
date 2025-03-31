@@ -8,7 +8,7 @@ import java.util.List;
 
 public class config implements SubCommand {
     @Override
-    public boolean run(CommandSender sender, Player player, String[] args) {
+    public boolean run(CommandSender sender, Player operatorPlayer, String[] args) {
         return true;
     }
 

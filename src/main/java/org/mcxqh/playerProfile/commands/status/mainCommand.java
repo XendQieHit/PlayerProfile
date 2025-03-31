@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mcxqh.playerProfile.Data;
 import org.mcxqh.playerProfile.PlayerProfile;
+import org.mcxqh.playerProfile.commands.CommandUtils;
 import org.mcxqh.playerProfile.commands.SubCommand;
 import org.mcxqh.playerProfile.commands.status.subcommand.custom;
 import org.mcxqh.playerProfile.commands.status.subcommand.list;
@@ -21,6 +22,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
+
+import static org.mcxqh.playerProfile.commands.CommandUtils.removeFirst;
 
 public class mainCommand implements TabExecutor {
     private final ArrayList<SubCommand> subCommands = new ArrayList<>();
@@ -103,7 +106,7 @@ public class mainCommand implements TabExecutor {
 
             if (Data.playerMapWithName.containsKey(args[0])) { // if args contains player's name
                 player = Data.playerMapWithName.get(args[0]);
-                args = removeFirst(args);
+                args = CommandUtils.removeFirst(args);
             }
 
             // run tabCompleter
@@ -112,7 +115,7 @@ public class mainCommand implements TabExecutor {
                 String subCommandName = subCommand.getClass().getSimpleName();
 
                 if (args[0].equalsIgnoreCase(subCommandName) && args.length >= 2) {
-                    args = removeFirst(args);
+                    args = CommandUtils.removeFirst(args);
                     Logger.getLogger("PlayerProfile").info(Arrays.toString(args));
                     return subCommand.tab(args, player);
                 } else if (args.length == 1 && subCommandName.startsWith(args[0].toLowerCase())) {
@@ -124,29 +127,5 @@ public class mainCommand implements TabExecutor {
         } else {
             return subCommandsNames;
         }
-    }
-
-    /**
-     * Using for args, remove first element of args and make up.
-     */
-    public static String[] removeFirst(String[] args) {
-        String[] args1 = new String[args.length - 1];
-        System.arraycopy(args, 1, args1, 0, args.length - 1);
-        return args1;
-    }
-
-    /**
-     * Return a filtered list by <code>startWith</code>.
-     * Isn't that a similar effect like vanilla?
-     */
-    public static List<String> pair(String keyword, List<String> resourceList) {
-        ArrayList<String> linkedList = new ArrayList<>();
-
-        for (String subStatusName : resourceList) {
-            if (subStatusName.startsWith(keyword.toLowerCase())) {
-                linkedList.add(subStatusName);
-            }
-        }
-        return linkedList;
     }
 }

@@ -16,8 +16,8 @@ import java.util.List;
 
 public class list implements SubCommand {
 
-    public boolean run(CommandSender sender, Player player, String[] args) {
-        Profile profile = Data.profileMapWithUUID.get(player.getUniqueId());
+    public boolean run(CommandSender sender, Player operatorPlayer, String[] args) {
+        Profile profile = Data.profileMapWithUUID.get(operatorPlayer.getUniqueId());
         StatusManager statusManager = profile.getStatusManager();
 
         // 加载状态
@@ -27,13 +27,13 @@ public class list implements SubCommand {
 
         // Player 的状态设置：
         // 状态     显示     自定义状态名
-        ComponentBuilder chatTopBar = new ComponentBuilder(player.getName() + " 的状态设置：\n").color(ChatColor.YELLOW);
+        ComponentBuilder chatTopBar = new ComponentBuilder(operatorPlayer.getName() + " 的状态设置：\n").color(ChatColor.YELLOW);
         chatTopBar.append("状态        显示      自定义状态名").color(ChatColor.YELLOW);
         sender.spigot().sendMessage(chatTopBar.create());
 
         // 这里就是具体状态的各个属性了
         for (Status status : statuses) {
-            player.spigot().sendMessage(batch(status));
+            operatorPlayer.spigot().sendMessage(batch(status));
         }
         return true;
     }

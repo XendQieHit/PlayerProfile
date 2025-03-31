@@ -5,6 +5,7 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.mcxqh.playerProfile.Data;
+import org.mcxqh.playerProfile.commands.CommandUtils;
 import org.mcxqh.playerProfile.commands.SubCommand;
 import org.mcxqh.playerProfile.commands.status.mainCommand;
 import org.mcxqh.playerProfile.players.Profile;
@@ -19,20 +20,20 @@ public class custom implements SubCommand {
     public List<String> tab(String[] args, Player player) {
         Profile profile = Data.profileMapWithUUID.get(player.getUniqueId());
         StatusManager statusManager = profile.getStatusManager();
-        return args.length == 1 ? mainCommand.pair(args[0], statusManager.getAllSubStatusNames()) : List.of();
+        return args.length == 1 ? CommandUtils.pair(args[0], statusManager.getAllSubStatusNames()) : List.of();
     }
 
     /**
      * @param args  [Status] [StatusName] [ChatColor] or [Status] true|false or [Status] reset
      */
     @Override
-    public boolean run(CommandSender sender, Player player, String[] args) {
+    public boolean run(CommandSender sender, Player operatorPlayer, String[] args) {
         if (args.length < 1) {
             sendUsageMessage(sender);
             return true;
         }
 
-        Profile profile = Data.profileMapWithUUID.get(player.getUniqueId());
+        Profile profile = Data.profileMapWithUUID.get(operatorPlayer.getUniqueId());
         StatusManager statusManager = profile.getStatusManager();
 
         for (Status status : statusManager.getAllSubStatuses()) {

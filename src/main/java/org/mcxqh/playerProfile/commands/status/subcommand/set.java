@@ -5,6 +5,7 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.mcxqh.playerProfile.Data;
+import org.mcxqh.playerProfile.commands.CommandUtils;
 import org.mcxqh.playerProfile.commands.SubCommand;
 import org.mcxqh.playerProfile.commands.status.mainCommand;
 import org.mcxqh.playerProfile.players.Profile;
@@ -20,8 +21,8 @@ public class set implements SubCommand {
      * @param args [Status]
      */
     @Override
-    public boolean run(CommandSender sender, Player player, String[] args) {
-        Profile profile = Data.profileMapWithUUID.get(player.getUniqueId());
+    public boolean run(CommandSender sender, Player operatorPlayer, String[] args) {
+        Profile profile = Data.profileMapWithUUID.get(operatorPlayer.getUniqueId());
         StatusManager statusManager = profile.getStatusManager();
 
         Logger.getLogger("PlayerProfile").info(args.toString());
@@ -39,6 +40,6 @@ public class set implements SubCommand {
     public List<String> tab(String[] args, Player player) {
         Profile profile = Data.profileMapWithUUID.get(player.getUniqueId());
         StatusManager statusManager = profile.getStatusManager();
-        return args.length == 1 ? mainCommand.pair(args[0], statusManager.getAllSubStatusNames()) : List.of();
+        return args.length == 1 ? CommandUtils.pair(args[0], statusManager.getAllSubStatusNames()) : List.of();
     }
 }

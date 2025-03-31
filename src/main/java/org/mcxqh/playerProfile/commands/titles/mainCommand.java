@@ -10,19 +10,20 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mcxqh.playerProfile.Data;
-import org.mcxqh.playerProfile.PlayerProfile;
 import org.mcxqh.playerProfile.commands.SubCommand;
 import org.mcxqh.playerProfile.commands.titles.subcommand.*;
-import org.mcxqh.playerProfile.players.Profile;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 
+import static org.mcxqh.playerProfile.commands.CommandUtils.removeFirst;
+
 public class mainCommand implements TabExecutor {
     private final ArrayList<SubCommand> subCommands = new ArrayList<>();
     private final List<String> subCommandsNames = new ArrayList<>();
+    public static final List<String> CHAT_COLOR_STRING_LIST = Arrays.stream(org.bukkit.ChatColor.values()).map(Enum::name).toList();
 
     public mainCommand() {
         this.subCommands.add(new create());
@@ -50,7 +51,7 @@ public class mainCommand implements TabExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         // args pretreatment
-        Player player;
+        Player player = null;
         if (args.length != 0) { // if args is not empty.
 
             if (Data.playerMapWithName.containsKey(args[0])) { // if args contains player's name
@@ -59,9 +60,11 @@ public class mainCommand implements TabExecutor {
             } else {
                 if (sender instanceof Player) {
                     player = (Player) sender;
-                } else {
+                } else if (args[0].isEmpty()) {
                     sender.spigot().sendMessage(new ComponentBuilder("/status <Player> custom|list|reload|set|toggle").color(ChatColor.YELLOW).create());
                     return true;
+                } else {
+                    player = Data.playerMapWithName.get(args[0]);
                 }
             }
 
@@ -81,11 +84,11 @@ public class mainCommand implements TabExecutor {
 
     private BaseComponent[] SendHelpMsg() {
         ComponentBuilder componentBuilder = new ComponentBuilder("===============================" + ChatColor.YELLOW + "/titles" + ChatColor.AQUA + "=============================\n").color(ChatColor.AQUA);
-        componentBuilder.append("/title add <称号名> <颜色> <简介>                   给自己添加自定义称号\n").color(ChatColor.YELLOW);
+        componentBuilder.append("/title create <称号名> <颜色> <简介>                给自己添加自定义称号\n").color(ChatColor.YELLOW);
         componentBuilder.append("/title award <玩家> <称号名> <颜色> <简介> [颁发身份]           隐藏称号\n");
         componentBuilder.append("/title list                                           查看拥有的称号\n");
         componentBuilder.append("/title set <称号>                                           展示称号\n");
-        componentBuilder.append("/title hide <称号>                                          隐藏称号\n");
+        componentBuilder.append("/title hide                                                隐藏称号\n");
         componentBuilder.append("===================================================================").color(ChatColor.AQUA);
         return componentBuilder.create();
     }
@@ -132,27 +135,5 @@ public class mainCommand implements TabExecutor {
         }
     }
 
-    /**
-     * Using for args, remove first element of args and make up.
-     */
-    public static String[] removeFirst(String[] args) {
-        String[] args1 = new String[args.length - 1];
-        System.arraycopy(args, 1, args1, 0, args.length - 1);
-        return args1;
-    }
 
-    /**
-     * Return a filtered list by <code>startWith</code>.
-     * Isn't that a similar effect like vanilla?
-     */
-    public static List<String> pair(String keyword, List<String> resourceList) {
-        ArrayList<String> linkedList = new ArrayList<>();
-
-        for (String subStatusName : resourceList) {
-            if (subStatusName.startsWith(keyword.toLowerCase())) {
-                linkedList.add(subStatusName);
-            }
-        }
-        return linkedList;
-    }
 }

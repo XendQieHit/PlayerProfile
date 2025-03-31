@@ -5,8 +5,8 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.mcxqh.playerProfile.Data;
+import org.mcxqh.playerProfile.commands.CommandUtils;
 import org.mcxqh.playerProfile.commands.SubCommand;
-import org.mcxqh.playerProfile.commands.status.mainCommand;
 import org.mcxqh.playerProfile.players.Profile;
 import org.mcxqh.playerProfile.players.profile.StatusManager;
 import org.mcxqh.playerProfile.players.profile.status.Status;
@@ -23,13 +23,13 @@ public class toggle implements SubCommand {
         StatusManager statusManager = profile.getStatusManager();
 
         if (args.length == 1) {
-            return mainCommand.pair(args[0], statusManager.getAllSubStatusNames());
+            return CommandUtils.pair(args[0], statusManager.getAllSubStatusNames());
 
         } else if (args.length == 2 || args.length == 3) {
             List<String> options = new ArrayList<>(2);
             options.add("true");
             options.add("false");
-            return mainCommand.pair(args[args.length - 1], options);
+            return CommandUtils.pair(args[args.length - 1], options);
         }
         return List.of();
     }
@@ -38,13 +38,13 @@ public class toggle implements SubCommand {
      * @param args [true|false] [true|false](Optional)
      */
     @Override
-    public boolean run(CommandSender sender, Player player, String[] args) {
+    public boolean run(CommandSender sender, Player operatorPlayer, String[] args) {
         if (args.length < 1) {
             sendUsageMessage(sender);
             return true;
         }
 
-        Profile profile = Data.profileMapWithUUID.get(player.getUniqueId());
+        Profile profile = Data.profileMapWithUUID.get(operatorPlayer.getUniqueId());
         StatusManager statusManager = profile.getStatusManager();
 
         for (Status status : statusManager.getAllSubStatuses()) {
