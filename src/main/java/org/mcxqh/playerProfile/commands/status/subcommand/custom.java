@@ -28,10 +28,18 @@ public class custom implements SubCommand {
      */
     @Override
     public boolean run(CommandSender sender, Player operatorPlayer, String[] args) {
-        if (args.length < 1) {
-            sendUsageMessage(sender);
-            return true;
-        }
+        List<String[]> paramNamesBiList = List.of(
+                new String[]{"Status", "StatusName", "ChatColor"},
+                new String[]{"Status", "true|false"},
+                new String[]{"Status", "reset"}
+        );
+        List<Class<?>[]> paramClassesBiList = List.of(
+                new Class<?>[]{String.class, String.class, ChatColor.class},
+                new Class<?>[]{String.class, Boolean.class},
+                new Class<?>[]{String.class, String.class}
+        );
+        if (!CommandUtils.checkArgs(sender, args, paramNamesBiList, paramClassesBiList, )) return true;
+
 
         Profile profile = Data.profileMapWithUUID.get(operatorPlayer.getUniqueId());
         StatusManager statusManager = profile.getStatusManager();

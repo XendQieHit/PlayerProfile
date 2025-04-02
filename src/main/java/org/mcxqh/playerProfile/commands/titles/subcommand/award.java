@@ -17,13 +17,9 @@ import org.mcxqh.playerProfile.players.profile.identity.Identity;
 import org.mcxqh.playerProfile.players.profile.identity.AuthLevel;
 import org.mcxqh.playerProfile.players.profile.title.Title;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
-import static org.mcxqh.playerProfile.commands.CommandUtils.checkArgsLength;
+import static org.mcxqh.playerProfile.commands.CommandUtils.checkArgsAbsence;
 
 public class award implements SubCommand {
 
