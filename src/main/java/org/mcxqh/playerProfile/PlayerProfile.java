@@ -78,7 +78,7 @@ public final class PlayerProfile extends JavaPlugin {
         // Plugin shutdown logic\
         Data.playerMapWithUUID.forEach((uuid, player) -> {
             Profile profile = Data.profileMapWithUUID.get(player.getUniqueId());
-            profile.saveSetting();
+            profile.save();
         });
     }
 }

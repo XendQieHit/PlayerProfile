@@ -7,7 +7,6 @@ import org.bukkit.entity.Player;
 import org.mcxqh.playerProfile.Data;
 import org.mcxqh.playerProfile.commands.CommandUtils;
 import org.mcxqh.playerProfile.commands.SubCommand;
-import org.mcxqh.playerProfile.commands.status.mainCommand;
 import org.mcxqh.playerProfile.players.Profile;
 import org.mcxqh.playerProfile.players.profile.StatusManager;
 import org.mcxqh.playerProfile.players.profile.status.Status;
@@ -34,17 +33,21 @@ public class custom implements SubCommand {
                 new String[]{"Status", "reset"}
         );
         List<Class<?>[]> paramClassesBiList = List.of(
-                new Class<?>[]{String.class, String.class, ChatColor.class},
+                new Class<?>[]{String.class, String.class, org.bukkit.ChatColor.class},
                 new Class<?>[]{String.class, Boolean.class},
                 new Class<?>[]{String.class, String.class}
         );
-        if (!CommandUtils.checkArgs(sender, args, paramNamesBiList, paramClassesBiList, )) return true;
+        ComponentBuilder cb = new ComponentBuilder("输入格式：\n")
+                .append("设置状态自定义名称：/status custom <status>(状态) <customName>(自定义名称) [ChatColor](颜色)\n")
+                .append("设置状态自定义名称显示：/status custom <status>(状态) <true|false(显示自定义状态名)>\n")
+                .append("重置状态自定义名称：/status custom <status> reset");
+        if (!CommandUtils.checkArgs(sender, args, paramNamesBiList, paramClassesBiList, cb.create())) return true;
 
 
         Profile profile = Data.profileMapWithUUID.get(operatorPlayer.getUniqueId());
         StatusManager statusManager = profile.getStatusManager();
 
-        for (Status status : statusManager.getAllSubStatuses()) {
+        for (Status status : statusManager.getStatuses()) {
             if (!args[0].equalsIgnoreCase(status.getClass().getSimpleName())) continue;
 
             boolean intoChatColor = false;
@@ -56,11 +59,10 @@ public class custom implements SubCommand {
                 }
             }
 
-            statusManager.saveStatus();
+            statusManager.save();
             status.load();
             return true;
         }
-        sendUsageMessage(sender);
         return true;
     }
 
@@ -93,13 +95,5 @@ public class custom implements SubCommand {
 
     private void sendMessage(CommandSender sender, String message, ChatColor color) {
         sender.spigot().sendMessage(new ComponentBuilder(message).color(color).create());
-    }
-
-    private void sendUsageMessage(CommandSender sender) {
-        ComponentBuilder cb = new ComponentBuilder("输入格式：\n");
-        cb.append("设置状态自定义名称：/status custom <status>(状态) <customName>(自定义名称) [ChatColor](颜色)\n");
-        cb.append("设置状态自定义名称显示：/status custom <status>(状态) <true|false(显示自定义状态名)>\n");
-        cb.append("重置状态自定义名称：/status custom <status> reset");
-        sender.spigot().sendMessage(cb.color(ChatColor.RED).create());
     }
 }

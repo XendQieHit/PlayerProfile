@@ -27,9 +27,9 @@ public class create implements SubCommand {
     @Override
     public boolean run(CommandSender sender, Player operatorPlayer, String[] args) {
         // Primary check args
-        String[] paramsType = new String[]{"称号名", "颜色", "简介"};
+        String[] paramNames = new String[]{"称号名", "颜色", "简介"};
         ComponentBuilder componentBuilder = new ComponentBuilder("给自己创建称号：/title create <称号名> <颜色> <简介>");
-        if (!CommandUtils.checkArgsLength(sender, 3, args, paramsType, componentBuilder.create())) return true;
+        if (!CommandUtils.checkArgsAbsence(sender, args, paramNames, componentBuilder.create())) return true;
 
         FileHandler fileHandler = new FileHandler();
         if (sender instanceof Player) {

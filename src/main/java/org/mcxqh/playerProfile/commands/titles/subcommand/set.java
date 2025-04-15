@@ -23,7 +23,7 @@ public class set implements SubCommand {
     public boolean run(CommandSender sender, Player operatorPlayer, String[] args) {
         // Primary args checking
         ComponentBuilder componentBuilder = new ComponentBuilder("展示称号：/title set <称号>");
-        if (!CommandUtils.checkArgsLength(sender, 4, args, new String[]{"称号"}, componentBuilder.create())) return true;
+        if (!CommandUtils.checkArgsAbsence(sender, args, new String[]{"称号"}, componentBuilder.create())) return true;
 
         TitleManager titleManager = Data.profileMapWithUUID.get(operatorPlayer.getUniqueId()).getTitleManager();
         ArrayList<Title> titleArrayList = titleManager.getTitleArrayList();

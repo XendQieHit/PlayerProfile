@@ -39,7 +39,7 @@ public class PlayerJoinListener implements Listener {
         Profile profile = new Profile(player);
 
         // load player setting and data
-        profile.loadSetting();
+        profile.load();
 
         // put player into statusListener pool
         try {

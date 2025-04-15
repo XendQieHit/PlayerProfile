@@ -29,12 +29,14 @@ public class award implements SubCommand {
     @Override
     public boolean run(CommandSender sender, Player operatorPlayer, String[] args) {
         // Primary check args
-        String[] paramTypes = new String[]{"玩家", "称号名", "颜色", "简介"};
+        String[] paramNames = {"玩家", "称号名", "颜色", "简介"};
+        Class<?>[] paramClasses = {String.class, String.class, ChatColor.class, String.class};
         BaseComponent[] usageMsg = new ComponentBuilder()
                 .append("以个人身份给玩家颁发称号：/title award <玩家> <称号名> <颜色> <简介>")
                 .append("以拥有的身份给玩家颁发称号：/title award <玩家> <称号名> <颜色> <简介> [身份]")
                 .create();
-        if (!CommandUtils.checkArgsLength(sender, 4, args, paramTypes, usageMsg)) return true;
+        if (!CommandUtils.checkArgsAbsence(sender, args, paramNames, usageMsg)
+                || !CommandUtils.checkArgsWrong(sender, args, paramClasses)) return true;
 
         // TargetPlayer
         Profile targetProfile = Data.profileMapWithName.get(args[0]);

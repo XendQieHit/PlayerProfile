@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.logging.Logger;
 
 public class CommandUtils {
     /**
@@ -37,32 +38,51 @@ public class CommandUtils {
      * Check if args conforms to the type format without absence param.
      *
      * @param paramNamesBiList List of params, each params match different command params standards.
+     * @param paramClassesBiList An array of Class Object, which defined the type format of args.
      * @param args Command arguments that inputted by sender.
      * @param usageMsg If args is <code>null</code>, this message will be sent to sender.
-     * @param paramClassesBiList An array of Class Object, which defined the type format of args.
      *
      * @return <code>true</code> if passed, otherwise <code>false</code>.
      */
     public static boolean checkArgs(CommandSender sender, String[] args, List<String[]> paramNamesBiList, List<Class<?>[]> paramClassesBiList, BaseComponent[] usageMsg) {
-        if (args == null) {
+        if (args == null || args.length < 1) {
             sender.spigot().sendMessage(usageMsg);
             return false;
         }
-        Iterator<String[]> paramNamesIterator = paramNamesBiList.iterator();
-        Iterator<Class<?>[]> paramTypesIterator = paramClassesBiList.iterator();
+        // Convert immutable lists into mutable lists.
+        List<String[]> mutableParamNamesBiList = new ArrayList<>(paramNamesBiList);
+        List<Class<?>[]> mutableParamClassesBiList = new ArrayList<>(paramClassesBiList);
+
+        int[] paramsMatchPoints = new int[paramNamesBiList.size()]; // Stats matched points of params with args.
+
         for (int i = 0; i < args.length && paramNamesBiList.size() > 1; i++) {
+            Iterator<String[]> paramNamesIterator = mutableParamNamesBiList.iterator();
+            Iterator<Class<?>[]> paramTypesIterator = mutableParamClassesBiList.iterator();
+
             while (paramNamesIterator.hasNext() && paramTypesIterator.hasNext()) {
                 String[] params = paramNamesIterator.next();
-                if (!params[i].equals(args[i])) {
+                Class<?>[] paramsTypes = paramTypesIterator.next();
+                if (i >= params.length) {
                     paramNamesIterator.remove();
                     paramTypesIterator.remove();
+                    continue;
+                }
+                if (params[i].equals(args[i])) {
+                    paramsMatchPoints[i] += 1;
                 }
             }
+            int j = 0;
+            for (int paramsMatchPoint : paramsMatchPoints) {
+                if (paramsMatchPoint > j) j = paramsMatchPoint;
+            }
+            if (checkArgsAbsence(sender, args, par))
         }
-        if (checkArgsAbsence(sender, args, paramNamesBiList.getFirst(), usageMsg)) {
+        // If there are multiple matched paramsLists, choose first one.
+        if (mutableParamNamesBiList.size() == 1 && checkArgsAbsence(sender, args, mutableParamNamesBiList.getFirst(), usageMsg)) {
+            return checkArgsWrong(sender, args, mutableParamClassesBiList.getFirst());
+        } else {
             return checkArgsWrong(sender, args, paramClassesBiList.getFirst());
         }
-        return false;
     }
 
     /**
@@ -99,11 +119,13 @@ public class CommandUtils {
      * @return <code>true</code> if passed, otherwise <code>false</code>.
      */
     public static boolean checkArgsAbsence(CommandSender sender, String[] args, String[] paramNames, BaseComponent[] usageMsg) {
-        if (args == null) {
+        if (args == null || args.length < 1) {
             sender.spigot().sendMessage(usageMsg);
             return false;
         }
-
+        if (args.length < paramNames.length) {
+            return sendEmptyErrMsg(sender, args, paramNames);
+        }
         for (int i = 0; i < paramNames.length; i++) {
             if (args[i].isEmpty()) {
                 args = Arrays.stream(args)
@@ -111,9 +133,6 @@ public class CommandUtils {
                         .toArray(String[]::new);
                 return sendEmptyErrMsg(sender, args, paramNames);
             }
-        }
-        if (args.length <= paramNames.length) {
-            return sendEmptyErrMsg(sender, args, paramNames);
         }
         return true;
     }
@@ -126,7 +145,7 @@ public class CommandUtils {
                 .color(ChatColor.RED)
                 .append("\n..." + userArgsString.substring(beginIndexOfSubString))
                 .color(ChatColor.GRAY)
-                .append(ChatColor.ITALIC + "<--[此处]")
+                .append(ChatColor.ITALIC + "_ <--[此处]")
                 .color(ChatColor.RED);
         // Display type of lost param
         if (!paramNames[args.length].isEmpty()) {
@@ -150,17 +169,29 @@ public class CommandUtils {
         for (int i = 0; i < paramsClasses.length; i++) {
             // Enum
             if (paramsClasses[i].isEnum()) {
-                String enumValues = null;
+                Enum<?>[] enumValues;
+                String[] enumValuesStringList;
+
+                // Get string name of enums.
                 try {
-                    enumValues = paramsClasses[i].getMethod("values").invoke(null).toString();
-                    Enum<?> anEnum = Enum.valueOf((Class<Enum>) paramsClasses[i], args[i]);
-                } catch (IllegalAccessException e) {
-                    return sendTypeErrMsg(sender, args, paramsClasses, i, enumValues);
-                } catch (InvocationTargetException | NoSuchMethodException e) {
+                    enumValues = ((Enum<?>[]) paramsClasses[i].getMethod("values").invoke(null));
+                } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                     throw new RuntimeException(e);
                 }
-                // Basic Variable
-            } else {
+
+                enumValuesStringList = new String[enumValues.length];
+                for (int j = 0; j < enumValues.length; j++) {
+                    enumValuesStringList[j] = enumValues[j].name();
+                }
+
+                // Match
+                for (String enumValueString : enumValuesStringList) {
+                    Logger.getLogger("PlayerProfile").info(enumValueString + " | " + args[i]);
+                    if (enumValueString.equals(args[i])) return true;
+                }
+                return sendTypeErrMsg(sender, args, paramsClasses, i, enumValuesStringList);
+
+            } else { // Basic Variable
                 try {
                     paramsClasses[i].cast(args[i]);
                 } catch (ClassCastException e) {
@@ -170,9 +201,9 @@ public class CommandUtils {
         }
         return true;
     }
-    private static boolean sendTypeErrMsg(CommandSender sender, String[] args, Class<?>[] paramsClasses, int i, String example) {
-        System.arraycopy(args, 0, args, 0, i + 1);
-        String userArgsString = "/" + String.join(" ", args);
+    private static boolean sendTypeErrMsg(CommandSender sender, String[] args, Class<?>[] paramsClasses, int i, String[] example) {
+        String[] argsDisplayed = Arrays.copyOf(args, i + 1);
+        String userArgsString = "/" + String.join(" ", argsDisplayed);
         int beginIndexOfSubString = Math.max(0, userArgsString.length() - 10);
         // Send Msg
         ComponentBuilder componentBuilder = new ComponentBuilder("输入的参数有误：")
@@ -184,7 +215,7 @@ public class CommandUtils {
                 .append("\n参数类型应为：\n" + paramsClasses[i].getSimpleName())
                 .color(ChatColor.RED);
         // Add examples tip
-        if (example != null) componentBuilder.append(example);
+        if (example != null) componentBuilder.append("\n" + Arrays.toString(example));
         sender.spigot().sendMessage(componentBuilder.create());
         return false;
     }

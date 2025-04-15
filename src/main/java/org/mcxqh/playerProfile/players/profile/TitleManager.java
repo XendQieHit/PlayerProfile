@@ -7,7 +7,6 @@ import org.bukkit.entity.Player;
 import org.mcxqh.playerProfile.files.FileHandler;
 import org.mcxqh.playerProfile.players.profile.title.Title;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Logger;
@@ -80,7 +79,7 @@ public class TitleManager {
     /**
      * Save player's title in json file
      */
-    public void saveTitle() {
+    public void save() {
         FileHandler fileHandler = new FileHandler();
         JsonArray jsonArray = new JsonArray();
         titleArrayList.forEach(title -> {

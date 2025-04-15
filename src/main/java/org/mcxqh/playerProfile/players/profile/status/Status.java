@@ -25,18 +25,18 @@ public abstract class Status {
     protected String customName;
     protected ChatColor color;
 
-    protected final byte id;
     protected final transient ChatColor defaultColor;
-    public final transient Profile profile;
+    public final transient byte id;
     public final transient Player player;
+    public transient Profile profile;
 
     public final transient FileConfiguration config = YamlConfiguration.loadConfiguration(new File(new File("plugins/PlayerProfile"),"config.yml"));
 
-    public Status(byte id, ChatColor defaultColor, Player player) {
+    public Status(byte id, ChatColor defaultColor, Player player, Profile profile) {
         this.id = id;
         this.defaultColor = defaultColor;
         this.player = player;
-        this.profile = Data.profileMapWithUUID.get(player.getUniqueId());
+        this.profile = profile;
     }
 
     public String getRawCustomStatus() {
@@ -86,31 +86,35 @@ public abstract class Status {
     /**
      * Load status within json.
      */
-    public <T extends Status> void load() {
+    public void load() {
         String statusName = this.getClass().getSimpleName();
         // Firstly, read json file.
         FileHandler fileHandler = new FileHandler();
         JsonArray jsonArray = fileHandler.getStatus(player);
         Gson gson = new Gson();
+        JsonObject json = (JsonObject) jsonArray.get(id);
 
-        JsonObject json = gson.fromJson(jsonArray.get(id), JsonObject.class);
+        load(json);
+    }
 
+    public void load(JsonObject json) {
         this.isDisplay = json.get("isDisplay").getAsBoolean();
         this.isDisplayCustomName = json.get("isDisplayCustomName").getAsBoolean();
         this.color = Utils.valueOfChatColor(json.get("color").getAsString());
         this.customName = json.get("customName").getAsString();
 
-
         // Reading finished. Now setting player's status.
-        Logger.getLogger("PlayerProfile").info("Status: " + json.toString() + " Loading Setting...");
+        Logger.getLogger("PlayerProfile").info("Status: " + json + " Loading Setting...");
     }
 
     /**
-     * Get JsonObject of sub-status.
+     * Get JsonElement of sub-status.
      */
-    public JsonObject toJson() {
+    public JsonElement toJson() {
         Gson gson = new Gson();
-        return (JsonObject) gson.toJsonTree(this);
+        JsonElement jsonTree = gson.toJsonTree(this);
+        Logger.getLogger("PlayerProfile").info(jsonTree.toString());
+        return jsonTree;
     }
 
     /**

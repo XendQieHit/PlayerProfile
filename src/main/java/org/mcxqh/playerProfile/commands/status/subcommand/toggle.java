@@ -47,7 +47,7 @@ public class toggle implements SubCommand {
         Profile profile = Data.profileMapWithUUID.get(operatorPlayer.getUniqueId());
         StatusManager statusManager = profile.getStatusManager();
 
-        for (Status status : statusManager.getAllSubStatuses()) {
+        for (Status status : statusManager.getStatuses()) {
             if (!args[0].equalsIgnoreCase(status.getClass().getSimpleName())) continue;
 
             List<Consumer<Boolean>> methods = List.of(
@@ -77,7 +77,7 @@ public class toggle implements SubCommand {
                 }
             }
 
-            statusManager.saveStatus();
+            statusManager.save();
             status.load();
             return true;
         }

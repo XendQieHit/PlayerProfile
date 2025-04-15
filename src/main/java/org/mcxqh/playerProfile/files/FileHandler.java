@@ -3,12 +3,11 @@ package org.mcxqh.playerProfile.files;
 import com.google.gson.*;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
-import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ComponentBuilder;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.mcxqh.playerProfile.Data;
+import org.mcxqh.playerProfile.commands.profile.subcommand.status;
 import org.mcxqh.playerProfile.players.Profile;
 import org.mcxqh.playerProfile.players.profile.identity.AuthLevel;
 import org.mcxqh.playerProfile.players.profile.identity.Identity;
@@ -67,11 +66,17 @@ public class FileHandler {
         return jsonArray;
     }
 
+    public void createStatus(Player player) throws IOException {
+        Logger.getLogger("PlayerProfile").info("444");
+        createStatus(Data.profileMapWithUUID.get(player.getUniqueId()));
+    }
+
     /**
      * Create a preprocessing status file. This method usually applied in command executor.
      */
-    public void createStatus(Player player) throws IOException {
-        String fileName = player.getName() + "@" + player.getUniqueId() + ".json";
+    public void createStatus(Profile profile) throws IOException {
+        if (profile == null) Logger.getLogger("PlayerProfile").info("profile is null.");
+        String fileName = profile.getName() + "@" + profile.getUniqueId() + ".json";
         File statusFile = new File(statusFolder, fileName);
 
         // check status file
@@ -82,25 +87,18 @@ public class FileHandler {
             statusFile.createNewFile();
             Logger.getLogger("PLayerProfile").info("12346");
 
-            Profile profile = Data.profileMapWithUUID.get(player.getUniqueId());
-
             // Initialize status file
-            BufferedWriter writer = new BufferedWriter(new FileWriter(statusFile));
-            JsonArray json = new JsonArray();
+            JsonWriter writer = new JsonWriter(new FileWriter(statusFile));
 
             Gson gson = new Gson();
+            writer.beginArray();
 
-            for (Class<? extends Status> statusClass : profile.getStatusManager().getStatusClassArrayList()) {
-                JsonObject status = new JsonObject();
-                try {
-                    status.addProperty(statusClass.getSimpleName(), gson.toJson(statusClass.getDeclaredConstructor().newInstance()));
-                } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
-                         NoSuchMethodException e) {
-                    throw new RuntimeException(e);
-                }
-                json.add(gson.toJson(status));
+            for (Status status : profile.getStatusManager().getStatuses()) {
+                JsonObject jsonObject = new JsonObject();
+                jsonObject.add(status.getClass().getSimpleName(), gson.toJsonTree(status));
+                writer.jsonValue(gson.toJson(jsonObject));
             }
-            writer.write(json.toString());
+            writer.endArray();
             writer.close();
         }
     }
@@ -127,7 +125,9 @@ public class FileHandler {
         File statusSettingFile = new File(statusFolder, fileName);
 
         // delete title file
+        Logger.getLogger("PlayerProfile").info("222");
         if (statusFolder.exists() && statusSettingFile.exists()) {
+            Logger.getLogger("PlayerProfile").info("111");
             statusSettingFile.delete();
         }
 
@@ -138,7 +138,7 @@ public class FileHandler {
     /**
      * Write status setting in status's json file.
      */
-    public void saveStatus(Player player, JsonObject StatusSetting) throws IOException {
+    public void saveStatus(Player player, JsonArray StatusSetting) throws IOException {
         String fileName = player.getName() + "@" + player.getUniqueId() + ".json";
         File statusSettingFile = new File(statusFolder, fileName);
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(statusSettingFile))) {
@@ -282,7 +282,7 @@ public class FileHandler {
                     "testTitle",
                     org.bukkit.ChatColor.DARK_AQUA,
                     "This is a testing title!\nhi!",
-                    new Identity(AuthLevel.PERSONAL, null, null, player.getUniqueId())
+                    new Identity(AuthLevel.PERSONAL, player.getUniqueId(), player.getName(), null, null)
             );
             jsonArray.add(title.toJson());
 
@@ -326,143 +326,4 @@ public class FileHandler {
         jsonWriter.jsonValue(jsonArray.toString());
         jsonWriter.close();
     }
-
-
-    /**
-     * Here are the methods extend above ones, which can handle error automatically.
-     * But it's need to provide an executor.
-     */
-
-/*
-    public void createStatus(Player executor, Player player) {
-        try {
-
-            createStatus(player);
-
-            executor.spigot().sendMessage(new ComponentBuilder("Setting successfully!").create());
-        } catch (IOException e) {
-            executor.spigot().sendMessage(new ComponentBuilder("Can't write successfully: " + e).color(ChatColor.RED).create());
-        }
-    }
-
-    public JsonObject getStatus(Player executor, Player player) {
-        JsonObject jsonObject = getStatus(player);
-        executor.spigot().sendMessage(new ComponentBuilder("获取状态文件").color(ChatColor.YELLOW).create());
-
-        return jsonObject;
-    }
-
-    public void resetStatus(Player executor, Player player) {
-        try {
-
-            resetStatus(player);
-
-            // send message of successfully reset
-            executor.spigot().sendMessage(new ComponentBuilder("重置成功！").create());
-        } catch (IOException e) {
-            executor.spigot().sendMessage(new ComponentBuilder("重置失败: " + e).color(ChatColor.RED).create());
-            throw new RuntimeException(e);
-        }
-    }
-
-    public void saveStatus(Player executor, Player player, JsonObject StatusSetting) {
-        try {
-
-            saveStatus(player, StatusSetting);
-
-            executor.spigot().sendMessage(new ComponentBuilder("保存成功！").color(ChatColor.YELLOW).create());
-        } catch (IOException e) {
-            executor.spigot().sendMessage(new ComponentBuilder("读写失败: " + e).color(ChatColor.RED).create());
-            throw new RuntimeException(e);
-        }
-    }
-
-    */
-/**
- * Create a json file of module profile for this player.
- * If this player has already had profile json file, this method will not execute.
- *//*
-
-    public void createProfile(Player executor, Player player) {
-        try {
-
-            createProfile(player);
-
-            executor.spigot().sendMessage(new ComponentBuilder("Setting successfully!").create());
-        } catch (IOException e) {
-            executor.spigot().sendMessage(new ComponentBuilder("Can't write successfully: " + e).create());
-        }
-    }
-
-    */
-/**
- * Get player's profile from corresponding json file. Use in command processing.
- *//*
-
-    public JsonObject getProfile(Player executor, Player player) {
-        JsonObject jsonObject;
-        try {
-
-            jsonObject = getProfile(player);
-
-        } catch (FileNotFoundException e) {
-            player.spigot().sendMessage(new ComponentBuilder("个人档案不存在: " + e).color(ChatColor.RED).create());
-            throw new RuntimeException(e);
-        }
-        return jsonObject;
-    }
-
-    */
-/**
- * Get player's title from profile. Use in command processing.
- *//*
-
-    public JsonArray getTitle(Player executor, Player player) {
-        JsonArray jsonArray;
-        try {
-
-            jsonArray = getTitle(player);
-
-        } catch (FileNotFoundException e) {
-            executor.spigot().sendMessage(new ComponentBuilder("获取称号文件失败：找不到称号文件." + e).color(ChatColor.RED).create());
-            throw new RuntimeException(e);
-        }
-        return jsonArray;
-    }
-
-    */
-/**
- * Reset player's profile. This method just implement delete and call <code>createProfile</code> method。
- *//*
-
-    public void resetProfile(Player executor, Player player) {
-        try {
-
-            resetProfile(player);
-
-        } catch (IOException e) {
-            executor.spigot().sendMessage(new ComponentBuilder("重置失败：" + e).color(net.md_5.bungee.api.ChatColor.RED).create());
-            throw new RuntimeException(e);
-        }
-        executor.spigot().sendMessage(new ComponentBuilder("称号重置成功！").color(ChatColor.YELLOW).create());
-    }
-
-    */
-/**
- * Write JsonObject in profile json file。
- *//*
-
-    public void saveProfile(Player executor, Player player, JsonObject profile) {
-        try {
-
-            saveProfile(player, profile);
-
-            executor.spigot().sendMessage(new ComponentBuilder("保存成功！").color(ChatColor.YELLOW).create());
-        } catch (IOException e) {
-            executor.spigot().sendMessage(new ComponentBuilder("读写失败: " + e).color(ChatColor.RED).create());
-            throw new RuntimeException(e);
-        }
-    }
-}
-*/
 }

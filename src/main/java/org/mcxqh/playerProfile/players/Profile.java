@@ -33,7 +33,7 @@ public class Profile {
         name = player.getName();
 
         titleManager = new TitleManager(player);
-        statusManager = new StatusManager(player);
+        statusManager = new StatusManager(player, this);
         identityManager = new IdentityManager(player);
 
         // Register on Plugin
@@ -44,6 +44,16 @@ public class Profile {
         Data.playerMapWithUUID.put(player.getUniqueId(), player);
 
         Data.playerNameSet.add(name);
+    }
+
+    public void load() {
+        this.statusManager.load();
+        this.titleManager.load();
+    }
+
+    public void save() {
+        this.statusManager.save();
+        this.titleManager.save();
     }
 
     public StatusManager getStatusManager() {
@@ -135,15 +145,5 @@ public class Profile {
                 }
             }
         }
-    }
-
-    public void loadSetting() {
-        this.statusManager.load();
-        this.titleManager.load();
-    }
-
-    public void saveSetting() {
-        this.statusManager.saveStatus();
-        this.titleManager.saveTitle();
     }
 }

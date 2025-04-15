@@ -30,7 +30,7 @@ public abstract class Collective {
     }
     public void add(Profile profile) {
         memberMap.put(profile.getUniqueId(), profile.getName());
-        profile.getIdentityManager().addIdentity(Identity.of(this.authLevel, profile.getUniqueId(), this, IdentityLevel.MEMBER));
+        profile.getIdentityManager().addIdentity(Identity.of(this.authLevel, profile.getUniqueId(), profile.getName(), this, IdentityLevel.MEMBER));
     }
 
     public void addManager(Player player) {
@@ -38,14 +38,14 @@ public abstract class Collective {
     }
     public void addManager(Profile profile) {
         managerMap.put(profile.getUniqueId(), profile.getName());
-        profile.getIdentityManager().addIdentity(Identity.of(this.authLevel, profile.getUniqueId(), this, IdentityLevel.MANAGER));
+        profile.getIdentityManager().addIdentity(Identity.of(this.authLevel, profile.getUniqueId(), profile.getName(), this, IdentityLevel.MANAGER));
     }
 
     public void removeManager(Player player) {
         removeManager(Data.profileMapWithUUID.get(player.getUniqueId()));
     }
     public void removeManager(Profile profile) {
-        profile.getIdentityManager().removeIdentity(Identity.of(this.authLevel, profile.getUniqueId(), this, IdentityLevel.MANAGER));
+        profile.getIdentityManager().removeIdentity(Identity.of(this.authLevel, profile.getUniqueId(), profile.getName(), this, IdentityLevel.MANAGER));
         managerMap.remove(profile.getUniqueId());
     }
 
@@ -63,7 +63,7 @@ public abstract class Collective {
             removeManager(profile);
         }
         memberMap.remove(uuid);
-        identityManager.removeIdentity(Identity.of(this.authLevel, uuid, this, IdentityLevel.MEMBER));
+        identityManager.removeIdentity(Identity.of(this.authLevel, uuid, profile.getName(), this, IdentityLevel.MEMBER));
     }
 
     public Map<UUID, String> getMemberMap() {
