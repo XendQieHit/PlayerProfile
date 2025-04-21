@@ -51,7 +51,7 @@ public class AFK extends Status {
     }
 
     @Override
-    public String getCustomName() {
+    public String toString() {
         if (customName != null && !customName.isEmpty()) {
             return color + "[" + customName + "]" + ChatColor.RESET;
         }
@@ -72,7 +72,7 @@ public class AFK extends Status {
         AFKPlayerListProfile.add(profile);
 
         if (this.isDisplay) {
-            String AFKDisplayedName = net.md_5.bungee.api.ChatColor.DARK_GRAY + profile.getName() + " " + this.getCustomName();
+            String AFKDisplayedName = net.md_5.bungee.api.ChatColor.DARK_GRAY + profile.getRawName() + " " + this.toString();
 
             player.setDisplayName(AFKDisplayedName);
             player.setPlayerListName(AFKDisplayedName);
@@ -83,10 +83,10 @@ public class AFK extends Status {
 
             // if title-display-on-broadcast is enabled, display player's name with title.
             if (config.getBoolean("title-display-on-broadcast")) {
-                componentBuilder.append(profile.getMixedName());
+                componentBuilder.append(profile.getNameAsBaseComponent());
                 componentBuilder.color(net.md_5.bungee.api.ChatColor.DARK_GRAY);
             } else {
-                componentBuilder.append(profile.getName());
+                componentBuilder.append(profile.getRawName());
                 componentBuilder.color(net.md_5.bungee.api.ChatColor.DARK_GRAY);
             }
             componentBuilder.append( " 睡着了...");

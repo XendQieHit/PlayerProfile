@@ -2,6 +2,7 @@ package org.mcxqh.playerProfile.commands.status;
 
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ComponentBuilder;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -9,14 +10,12 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mcxqh.playerProfile.Data;
-import org.mcxqh.playerProfile.PlayerProfile;
 import org.mcxqh.playerProfile.commands.CommandUtils;
 import org.mcxqh.playerProfile.commands.SubCommand;
 import org.mcxqh.playerProfile.commands.status.subcommand.custom;
 import org.mcxqh.playerProfile.commands.status.subcommand.list;
 import org.mcxqh.playerProfile.commands.status.subcommand.set;
 import org.mcxqh.playerProfile.commands.status.subcommand.toggle;
-import org.mcxqh.playerProfile.players.Profile;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -82,6 +81,10 @@ public class mainCommand implements TabExecutor {
             return false;
 
         } else {
+            if (sender instanceof Player) {
+                player = (Player) sender;
+                player.openInventory(Bukkit.createInventory(player, ))
+            }
             return false;
         }
     }

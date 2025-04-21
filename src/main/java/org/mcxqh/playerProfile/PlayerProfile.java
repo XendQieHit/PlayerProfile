@@ -4,7 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.mcxqh.playerProfile.commands.profile.mainCommand;
+import org.mcxqh.playerProfile.commands.status.mainCommand;
 import org.mcxqh.playerProfile.events.PlayerChatListener;
 import org.mcxqh.playerProfile.events.PlayerJoinListener;
 import org.mcxqh.playerProfile.events.PlayerQuitListener;
@@ -68,8 +68,8 @@ public final class PlayerProfile extends JavaPlugin {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, StatusListener::AFKDetector, 0L, 20L); // per 1 second
 
         // Register Commands
-        this.getCommand("profile").setExecutor(new mainCommand());
-        this.getCommand("status").setExecutor(new org.mcxqh.playerProfile.commands.status.mainCommand());
+        this.getCommand("profile").setExecutor(new org.mcxqh.playerProfile.commands.profile.mainCommand());
+        this.getCommand("status").setExecutor(new mainCommand());
         this.getCommand("titles").setExecutor(new org.mcxqh.playerProfile.commands.titles.mainCommand());
     }
 

@@ -6,6 +6,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
+import org.mcxqh.playerProfile.Constants;
 import org.mcxqh.playerProfile.Data;
 import org.mcxqh.playerProfile.Utils;
 import org.mcxqh.playerProfile.commands.CommandUtils;
@@ -102,7 +103,7 @@ public class award implements SubCommand {
                 return CommandUtils.pair(args[0], Data.playerMapWithName.keySet().stream().toList());
             }
             case 3 -> { // Color
-                return CommandUtils.pair(args[2], mainCommand.CHAT_COLOR_STRING_LIST);
+                return CommandUtils.pair(args[2], Constants.CHAT_COLOR_STRING_LIST);
             }
             case 5 -> { // IssuerClass
                 return CommandUtils.pair(args[4], identities.stream().map(Identity::toString).toList());

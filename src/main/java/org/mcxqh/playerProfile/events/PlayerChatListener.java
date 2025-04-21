@@ -28,7 +28,7 @@ public class PlayerChatListener implements Listener {
 
         // build message
         ComponentBuilder componentBuilder = new ComponentBuilder();
-        componentBuilder.append(profile.getMixedName()); // Player
+        componentBuilder.append(profile.getNameAsBaseComponent()); // Player
         componentBuilder.append(event.getMessage()); // Message
         Bukkit.getServer().spigot().broadcast(componentBuilder.create());
     }

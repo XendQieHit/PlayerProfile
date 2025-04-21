@@ -4,19 +4,15 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.mcxqh.playerProfile.Data;
 import org.mcxqh.playerProfile.Utils;
 import org.mcxqh.playerProfile.files.FileHandler;
 import org.mcxqh.playerProfile.players.Profile;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.logging.Logger;
 
 public abstract class Status {
@@ -43,7 +39,8 @@ public abstract class Status {
         return customName;
     }
 
-    public String getCustomName() {
+    @Override
+    public String toString() {
         if (customName != null && !customName.isEmpty()) {
             return color + "[" + getRawCustomStatus() + "]" + ChatColor.RESET;
         }

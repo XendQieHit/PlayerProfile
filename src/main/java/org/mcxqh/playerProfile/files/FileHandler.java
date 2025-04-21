@@ -7,7 +7,6 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.mcxqh.playerProfile.Data;
-import org.mcxqh.playerProfile.commands.profile.subcommand.status;
 import org.mcxqh.playerProfile.players.Profile;
 import org.mcxqh.playerProfile.players.profile.identity.AuthLevel;
 import org.mcxqh.playerProfile.players.profile.identity.Identity;
@@ -15,7 +14,6 @@ import org.mcxqh.playerProfile.players.profile.title.Title;
 import org.mcxqh.playerProfile.players.profile.status.Status;
 
 import java.io.*;
-import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Logger;
 
 public class FileHandler {
@@ -76,7 +74,7 @@ public class FileHandler {
      */
     public void createStatus(Profile profile) throws IOException {
         if (profile == null) Logger.getLogger("PlayerProfile").info("profile is null.");
-        String fileName = profile.getName() + "@" + profile.getUniqueId() + ".json";
+        String fileName = profile.getRawName() + "@" + profile.getUniqueId() + ".json";
         File statusFile = new File(statusFolder, fileName);
 
         // check status file

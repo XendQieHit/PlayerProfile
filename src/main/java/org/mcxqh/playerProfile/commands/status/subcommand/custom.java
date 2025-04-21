@@ -27,16 +27,18 @@ public class custom implements SubCommand {
      */
     @Override
     public boolean run(CommandSender sender, Player operatorPlayer, String[] args) {
-        List<String[]> paramNamesBiList = List.of(
+        String[][] paramNamesBiList = {
                 new String[]{"Status", "StatusName", "ChatColor"},
-                new String[]{"Status", "true|false"},
+                new String[]{"Status", "true"},
+                new String[]{"Status", "false"},
                 new String[]{"Status", "reset"}
-        );
-        List<Class<?>[]> paramClassesBiList = List.of(
+        };
+        Class<?>[][] paramClassesBiList = {
                 new Class<?>[]{String.class, String.class, org.bukkit.ChatColor.class},
-                new Class<?>[]{String.class, Boolean.class},
+                new Class<?>[]{String.class, boolean.class},
+                new Class<?>[]{String.class, boolean.class},
                 new Class<?>[]{String.class, String.class}
-        );
+        };
         ComponentBuilder cb = new ComponentBuilder("输入格式：\n")
                 .append("设置状态自定义名称：/status custom <status>(状态) <customName>(自定义名称) [ChatColor](颜色)\n")
                 .append("设置状态自定义名称显示：/status custom <status>(状态) <true|false(显示自定义状态名)>\n")
@@ -84,12 +86,8 @@ public class custom implements SubCommand {
 
     private void handleSecondArgument(CommandSender sender, Status status, String arg) {
         if (!arg.isEmpty()) {
-            try {
-                status.setColor(org.bukkit.ChatColor.valueOf(arg.toUpperCase()));
-                sendMessage(sender, "已设置自定义状态名颜色", ChatColor.YELLOW);
-            } catch (IllegalArgumentException e) {
-                sendMessage(sender, "颜色代码错误，输入你想要设置的颜色的英文单词就可以了", ChatColor.RED);
-            }
+            status.setColor(org.bukkit.ChatColor.valueOf(arg.toUpperCase()));
+            sendMessage(sender, "已设置自定义状态名颜色", ChatColor.YELLOW);
         }
     }
 

@@ -23,7 +23,6 @@ import static org.mcxqh.playerProfile.commands.CommandUtils.removeFirst;
 public class mainCommand implements TabExecutor {
     private final ArrayList<SubCommand> subCommands = new ArrayList<>();
     private final List<String> subCommandsNames = new ArrayList<>();
-    public static final List<String> CHAT_COLOR_STRING_LIST = Arrays.stream(org.bukkit.ChatColor.values()).map(Enum::name).toList();
 
     public mainCommand() {
         this.subCommands.add(new create());

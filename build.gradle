@@ -15,10 +15,10 @@ repositories {
         name = "sonatype"
         url = "https://oss.sonatype.org/content/groups/public/"
     }
-    /*maven {
+    maven {
         name = "geyser-api"
         url = uri("https://repo.opencollab.dev/main/")
-    }*/
+    }
 }
 
 dependencies {
@@ -26,9 +26,9 @@ dependencies {
     compileOnly("org.spigotmc:spigot-api:1.21-R0.1-SNAPSHOT")
 }
 
-/*dependencies {
+dependencies {
     compileOnly('org.geysermc.geyser:api:2.4.2-SNAPSHOT')
-}*/
+}
 
 def targetJavaVersion = 21
 java {

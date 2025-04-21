@@ -3,13 +3,15 @@ package org.mcxqh.playerProfile.players.profile.identity;
 import com.google.gson.JsonObject;
 import org.bukkit.ChatColor;
 
+import java.util.logging.Logger;
+
 public enum AuthLevel {
-    SERVER("Server", "GRAY"),
+    SERVER("Server", "DARK_GRAY"),
     OFFICIAL("Official", "RED"),
     GUILD("Guild", "GREEN"),
     GROUP("Group", "ORANGE"),
     TEAM("Team", "AQUA"),
-    PERSONAL("Personal", "LIGHT_GRAY");
+    PERSONAL("Personal", "GRAY");
 
     private final String name;
     private final String color;

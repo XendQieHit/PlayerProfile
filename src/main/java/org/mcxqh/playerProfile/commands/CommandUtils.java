@@ -4,12 +4,65 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.command.CommandSender;
+import org.mcxqh.playerProfile.Constants;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
-import java.util.logging.Logger;
+import java.util.function.Predicate;
 
 public class CommandUtils {
+
+    private static final Map<Class<?>, Predicate<String>> VALIDATORS = new HashMap<>();
+
+    // Initialize the cast of method to parse of basic type.
+    static {
+        VALIDATORS.put(int.class, str -> {
+            try {
+                Integer.parseInt(str);
+                return true;
+            } catch (Exception e) {
+                return false;
+            }
+        });
+        VALIDATORS.put(double.class, str -> {
+            try {
+                Double.parseDouble(str);
+                return true;
+            } catch (Exception e) {
+                return false;
+            }
+        });
+        VALIDATORS.put(boolean.class, str -> "true".equalsIgnoreCase(str) || "false".equalsIgnoreCase(str));
+        VALIDATORS.put(char.class, str -> str.length() == 1);
+        VALIDATORS.put(byte.class, str -> {
+            try {
+                Byte.parseByte(str);
+                return true;
+            } catch (Exception e) {
+                return false;
+            }
+        });
+        VALIDATORS.put(short.class, str -> {
+            try {
+                Short.parseShort(str);
+                return true;
+            } catch (Exception e) {
+                return false;
+            }
+        });
+    }
+
+    /**
+     * Test if this str can be parsed into basic type specified.
+     */
+    public static boolean canConvertTo(String str, Class<?> type) {
+        Predicate<String> validator = VALIDATORS.get(type);
+        if (validator == null) {
+            throw new IllegalArgumentException("Unsupported type: " + type.getName());
+        }
+        return validator.test(str);
+    }
+
     /**
      * Using for args, remove first element of args and make up.
      */
@@ -36,6 +89,9 @@ public class CommandUtils {
 
     /**
      * Check if args conforms to the type format without absence param.
+     * Each params in <code>paramNamesBiList</code> correspond to only one params in <code>paramClassesBiList</code> according to same index.
+     * The further ahead in paramsBiList, the higher priority of this format to be matched.
+     * Please ensure that length of <code>paramNamesBiList</code> is equal to length of <code>paramClassesBiList</code>.
      *
      * @param paramNamesBiList List of params, each params match different command params standards.
      * @param paramClassesBiList An array of Class Object, which defined the type format of args.
@@ -44,45 +100,52 @@ public class CommandUtils {
      *
      * @return <code>true</code> if passed, otherwise <code>false</code>.
      */
-    public static boolean checkArgs(CommandSender sender, String[] args, List<String[]> paramNamesBiList, List<Class<?>[]> paramClassesBiList, BaseComponent[] usageMsg) {
+    public static boolean checkArgs(CommandSender sender, String[] args, String[][] paramNamesBiList, Class<?>[][] paramClassesBiList, BaseComponent[] usageMsg) {
         if (args == null || args.length < 1) {
             sender.spigot().sendMessage(usageMsg);
             return false;
         }
-        // Convert immutable lists into mutable lists.
-        List<String[]> mutableParamNamesBiList = new ArrayList<>(paramNamesBiList);
-        List<Class<?>[]> mutableParamClassesBiList = new ArrayList<>(paramClassesBiList);
 
-        int[] paramsMatchPoints = new int[paramNamesBiList.size()]; // Stats matched points of params with args.
-
-        for (int i = 0; i < args.length && paramNamesBiList.size() > 1; i++) {
-            Iterator<String[]> paramNamesIterator = mutableParamNamesBiList.iterator();
-            Iterator<Class<?>[]> paramTypesIterator = mutableParamClassesBiList.iterator();
-
-            while (paramNamesIterator.hasNext() && paramTypesIterator.hasNext()) {
-                String[] params = paramNamesIterator.next();
-                Class<?>[] paramsTypes = paramTypesIterator.next();
-                if (i >= params.length) {
-                    paramNamesIterator.remove();
-                    paramTypesIterator.remove();
-                    continue;
-                }
-                if (params[i].equals(args[i])) {
-                    paramsMatchPoints[i] += 1;
+        int[] paramsMatchPoints = new int[paramNamesBiList.length]; // Stats matched points of params with args.
+        String[] defaultParamNames = paramNamesBiList[0];
+        Class<?>[] defaultParamClasses = paramClassesBiList[0];
+        // Match
+        for (int i = 0; i < args.length && paramNamesBiList.length > 1; i++) {
+            for (int j = 0; j < paramNamesBiList.length; j++) {
+                if (paramNamesBiList[j] != null) {
+                    if (paramNamesBiList[j].length <= i) {
+                        paramNamesBiList[j] = null;
+                        paramsMatchPoints[j] = -1;
+                        continue;
+                    }
+                    if (paramNamesBiList[j][i].equals(args[i])) paramsMatchPoints[j]++;
                 }
             }
-            int j = 0;
-            for (int paramsMatchPoint : paramsMatchPoints) {
-                if (paramsMatchPoint > j) j = paramsMatchPoint;
+        }
+
+        // Filter
+        int index = -1, point = 0;
+        for (int i = 0; i < paramNamesBiList.length; i++) {
+            if (paramNamesBiList[i] != null) {
+                index = i;
+                break;
             }
-            if (checkArgsAbsence(sender, args, par))
         }
-        // If there are multiple matched paramsLists, choose first one.
-        if (mutableParamNamesBiList.size() == 1 && checkArgsAbsence(sender, args, mutableParamNamesBiList.getFirst(), usageMsg)) {
-            return checkArgsWrong(sender, args, mutableParamClassesBiList.getFirst());
-        } else {
-            return checkArgsWrong(sender, args, paramClassesBiList.getFirst());
+
+        for (int j = 0; j < paramsMatchPoints.length; j++) {
+            int paramsMatchPoint = paramsMatchPoints[j];
+            if (paramsMatchPoint > point) {
+                point = paramsMatchPoint;
+                index = j;
+            }
         }
+
+        // Check
+        if (index == -1 && checkArgsAbsence(sender, args, defaultParamNames, usageMsg))
+            return checkArgsWrong(sender, args, defaultParamClasses);
+        if (checkArgsAbsence(sender, args, paramNamesBiList[index], usageMsg))
+            return checkArgsWrong(sender, args, paramClassesBiList[index]);
+        return false;
     }
 
     /**
@@ -126,14 +189,6 @@ public class CommandUtils {
         if (args.length < paramNames.length) {
             return sendEmptyErrMsg(sender, args, paramNames);
         }
-        for (int i = 0; i < paramNames.length; i++) {
-            if (args[i].isEmpty()) {
-                args = Arrays.stream(args)
-                        .limit(i)
-                        .toArray(String[]::new);
-                return sendEmptyErrMsg(sender, args, paramNames);
-            }
-        }
         return true;
     }
     private static boolean sendEmptyErrMsg(CommandSender sender, String[] args, String[] paramNames) {
@@ -145,7 +200,7 @@ public class CommandUtils {
                 .color(ChatColor.RED)
                 .append("\n..." + userArgsString.substring(beginIndexOfSubString))
                 .color(ChatColor.GRAY)
-                .append(ChatColor.ITALIC + "_ <--[此处]")
+                .append(ChatColor.ITALIC + " _ <--[此处]")
                 .color(ChatColor.RED);
         // Display type of lost param
         if (!paramNames[args.length].isEmpty()) {
@@ -178,7 +233,6 @@ public class CommandUtils {
                 } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                     throw new RuntimeException(e);
                 }
-
                 enumValuesStringList = new String[enumValues.length];
                 for (int j = 0; j < enumValues.length; j++) {
                     enumValuesStringList[j] = enumValues[j].name();
@@ -186,17 +240,18 @@ public class CommandUtils {
 
                 // Match
                 for (String enumValueString : enumValuesStringList) {
-                    Logger.getLogger("PlayerProfile").info(enumValueString + " | " + args[i]);
                     if (enumValueString.equals(args[i])) return true;
+                }
+                if (paramsClasses[i] == org.bukkit.ChatColor.class) {
+                    return sendTypeErrMsg(sender, args, paramsClasses, i, Constants.CHAT_COLOR_STRING_ARRAY);
                 }
                 return sendTypeErrMsg(sender, args, paramsClasses, i, enumValuesStringList);
 
+            } else if (paramsClasses[i] == String.class) {
+                continue;
+
             } else { // Basic Variable
-                try {
-                    paramsClasses[i].cast(args[i]);
-                } catch (ClassCastException e) {
-                    return sendTypeErrMsg(sender, args, paramsClasses, i, null);
-                }
+                if (!canConvertTo(args[i], paramsClasses[i])) sendTypeErrMsg(sender, args, paramsClasses, i, null);
             }
         }
         return true;
@@ -215,7 +270,7 @@ public class CommandUtils {
                 .append("\n参数类型应为：\n" + paramsClasses[i].getSimpleName())
                 .color(ChatColor.RED);
         // Add examples tip
-        if (example != null) componentBuilder.append("\n" + Arrays.toString(example));
+        if (example != null) componentBuilder.append("\n" + Arrays.toString(example) + " 的其中一个参数");
         sender.spigot().sendMessage(componentBuilder.create());
         return false;
     }

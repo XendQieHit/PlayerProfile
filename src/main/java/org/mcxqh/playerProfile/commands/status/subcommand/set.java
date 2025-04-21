@@ -29,6 +29,7 @@ public class set implements SubCommand {
         for (Status status : statusManager.getStatuses()) {
             if (args[0].equalsIgnoreCase(status.getClass().getSimpleName())) {
                 status.now();
+                statusManager.setPresentStatus(status);
                 sender.spigot().sendMessage(new ComponentBuilder("设置成功").color(ChatColor.YELLOW).create());
             }
         }

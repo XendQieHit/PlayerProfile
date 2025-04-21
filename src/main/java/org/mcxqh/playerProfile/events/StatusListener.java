@@ -11,6 +11,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.mcxqh.playerProfile.Data;
 import org.mcxqh.playerProfile.players.Profile;
+import org.mcxqh.playerProfile.players.profile.StatusManager;
 import org.mcxqh.playerProfile.players.profile.status.instances.AFK;
 import org.mcxqh.playerProfile.players.profile.status.instances.Idle;
 
@@ -47,19 +48,21 @@ public class StatusListener implements Listener {
     public void disableAFK(PlayerMoveEvent event) {
         Player player = event.getPlayer();
         Profile profile = Data.profileMapWithUUID.get(player.getUniqueId());
-        AFK afk = profile.getStatusManager().getAFK();
-        Idle idle = profile.getStatusManager().getIdle();
+        StatusManager statusManager = profile.getStatusManager();
+        AFK afk = statusManager.getAFK();
+        Idle idle = statusManager.getIdle();
 
         if (afk.isAFK()) {
             // disable AFK status of moving afk player
+            statusManager.setPresentStatus(idle);
             idle.now();
 
             // build text component to broadcast
             ComponentBuilder componentBuilder = new ComponentBuilder();
             if (config.getBoolean("title-display-on-broadcast")) {
-                componentBuilder.append(profile.getMixedName());
+                componentBuilder.append(profile.getNameAsBaseComponent());
             } else {
-                componentBuilder.append(profile.getName());
+                componentBuilder.append(profile.getRawName());
                 componentBuilder.append(" 回来了！");
                 componentBuilder.color(net.md_5.bungee.api.ChatColor.YELLOW);
                 Bukkit.getServer().spigot().broadcast(componentBuilder.create());
@@ -72,8 +75,9 @@ public class StatusListener implements Listener {
 
     public static void isAFK(Profile profile) {
         Player player = profile.getPlayer();
-        AFK afk = profile.getStatusManager().getAFK();
-        Idle idle = profile.getStatusManager().getIdle();
+        StatusManager statusManager = profile.getStatusManager();
+        AFK afk = statusManager.getAFK();
+        Idle idle = statusManager.getIdle();
         FileConfiguration config = YamlConfiguration.loadConfiguration(new File(new File("plugins/PlayerProfile"),"config.yml"));
 
         // verify idle time
@@ -82,6 +86,7 @@ public class StatusListener implements Listener {
             idle.addIdle_TIME(1);
         } else {
             // set AFK status
+            statusManager.setPresentStatus(afk);
             afk.now();
         }
     }

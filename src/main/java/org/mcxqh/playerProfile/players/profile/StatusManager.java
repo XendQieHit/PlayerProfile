@@ -2,13 +2,10 @@ package org.mcxqh.playerProfile.players.profile;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.entity.Player;
-import org.checkerframework.checker.units.qual.A;
-import org.mcxqh.playerProfile.Data;
 import org.mcxqh.playerProfile.files.FileHandler;
 import org.mcxqh.playerProfile.players.Profile;
 import org.mcxqh.playerProfile.players.profile.status.Status;
@@ -25,6 +22,7 @@ public class StatusManager {
     private Idle idle;
     private final Player player;
     private final ArrayList<Status> statusArrayList = new ArrayList<>();
+    private Status presentStatus;
 
     private final ArrayList<Class<? extends Status>> statusClassArrayList = new ArrayList<>();
 
@@ -38,6 +36,8 @@ public class StatusManager {
 
         this.statusArrayList.add(afk);
         this.statusArrayList.add(idle);
+
+        this.presentStatus = idle;
     }
 
     public AFK getAFK() {
@@ -46,6 +46,14 @@ public class StatusManager {
 
     public Idle getIdle() {
         return idle;
+    }
+
+    public Status getPresentStatus() {
+        return presentStatus;
+    }
+
+    public void setPresentStatus(Status status) {
+        this.presentStatus = status;
     }
 
     public ArrayList<Status> getStatuses() {
@@ -117,7 +125,7 @@ public class StatusManager {
     private void showDetail() {
         ComponentBuilder componentBuilder = new ComponentBuilder("Status List:");
         statusArrayList.forEach(status -> {
-            componentBuilder.append("\n" + status.getName() + "    " + status.getColor().name() + "    " + status.getCustomName());
+            componentBuilder.append("\n" + status.getName() + "    " + status.getColor().name() + "    " + status.toString());
         });
         this.player.spigot().sendMessage(componentBuilder.create());
     }

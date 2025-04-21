@@ -16,7 +16,7 @@ public class list implements SubCommand {
         ComponentBuilder componentBuilder = new ComponentBuilder("已拥有的称号：").color(ChatColor.YELLOW);
 
         for (Title title : Data.profileMapWithUUID.get(operatorPlayer.getUniqueId()).getTitleManager().getTitleArrayList())
-            componentBuilder.append(title.toBaseComponent() + "\n");
+            componentBuilder.append("\n").append(title.toBaseComponent());
 
         sender.spigot().sendMessage(componentBuilder.create());
         return true;

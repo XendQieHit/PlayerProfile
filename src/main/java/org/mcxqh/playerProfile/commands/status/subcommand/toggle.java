@@ -56,7 +56,7 @@ public class toggle implements SubCommand {
             );
 
             for (int i = 1; i <= 2 && i < args.length; i++) { // 确保只处理前两个额外参数
-                if (i != 2 || status.getCustomName() != null) { // Ensure CustomName is not null
+                if (i != 2 || status.toString() != null) { // Ensure CustomName is not null
                     switch (args[i].toLowerCase()) {
                         case "true" -> {
                             methods.get(i - 1).accept(true);

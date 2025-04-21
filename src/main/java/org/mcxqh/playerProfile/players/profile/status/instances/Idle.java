@@ -62,8 +62,8 @@ public class Idle extends Status {
         if (this.isDisplay) {
             // recover player's name
             String playerName;
-            if (isDisplayCustomName && !getCustomName().isEmpty()) {
-                playerName = player.getName() + " " + idle.getCustomName();
+            if (isDisplayCustomName && !toString().isEmpty()) {
+                playerName = player.getName() + " " + idle.toString();
             } else {
                 playerName = player.getName();
             }

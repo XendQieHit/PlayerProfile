@@ -57,7 +57,7 @@ public class list implements SubCommand {
         }
 
         // 自定义状态名
-        componentBuilder.append(status.getCustomName());
+        componentBuilder.append(status.toString());
         return componentBuilder.create();
     }
 }

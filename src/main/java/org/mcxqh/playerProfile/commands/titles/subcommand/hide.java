@@ -1,5 +1,7 @@
 package org.mcxqh.playerProfile.commands.titles.subcommand;
 
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.mcxqh.playerProfile.Data;
@@ -12,6 +14,7 @@ public class hide implements SubCommand {
     @Override
     public boolean run(CommandSender sender, Player operatorPlayer, String[] args) {
         Data.profileMapWithUUID.get(operatorPlayer.getUniqueId()).getTitleManager().setPresentTitle(null);
+        sender.spigot().sendMessage(new ComponentBuilder("已隐藏称号").color(ChatColor.YELLOW.asBungee()).create());
         return true;
     }
 

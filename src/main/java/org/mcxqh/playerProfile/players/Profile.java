@@ -72,7 +72,7 @@ public class Profile {
         return uniqueId;
     }
 
-    public String getName() {
+    public String getRawName() {
         return name;
     }
 
@@ -85,7 +85,7 @@ public class Profile {
      * This value is usually used to send message。
      * @return BaseComponent[]
      */
-    public BaseComponent[] getMixedName() {
+    public BaseComponent[] getNameAsBaseComponent() {
         // 0 -> [Title]<PlayerName>ChatMessage
         // 1 -> [Title] PlayerName: ChatMessage
         ComponentBuilder componentBuilder = new ComponentBuilder();
@@ -100,14 +100,14 @@ public class Profile {
 
         switch (config.getInt("title.title-style")) {
             case 0 -> {
-                componentBuilder.append("<" + getName() + ">");
+                componentBuilder.append("<" + getRawName() + ">");
             }
             case 1 -> {
-                componentBuilder.append(" " + getName() + ": ");
+                componentBuilder.append(" " + getRawName() + ": ");
             }
             default -> {
                 Logger.getLogger("PlayerProfile").warning("Title style argument isn't in range! Please check PlayerProfile/config.yml !");
-                componentBuilder.append("<" + getName() + ">");
+                componentBuilder.append("<" + getRawName() + ">");
             }
         }
         return componentBuilder.create();
@@ -118,30 +118,30 @@ public class Profile {
      * This value is usually used to modify message sent by player.
      * @return String
      */
-    public String getStringName() {
+    public String getNameAsString() {
         Title presentTitle = this.titleManager.getPresentTitle();
 
         switch (config.getInt("title.title-style")) {
             case 0 -> {
                 if (presentTitle != null) {
-                    return presentTitle.getColor() + "[" + presentTitle.getName() + "]" + ChatColor.RESET + "<" + this.getName() + "> ";
+                    return presentTitle.getColor() + "[" + presentTitle.getName() + "]" + ChatColor.RESET + "<" + this.getRawName() + "> ";
                 } else {
-                    return "<" + this.getName() + "> ";
+                    return "<" + this.getRawName() + "> ";
                 }
             }
             case 1 -> {
                 if (presentTitle != null) {
-                    return presentTitle.getColor() + "[" + presentTitle.getName() + "] " + ChatColor.RESET + this.getName() + ":  ";
+                    return presentTitle.getColor() + "[" + presentTitle.getName() + "] " + ChatColor.RESET + this.getRawName() + ":  ";
                 } else {
-                    return this.getName() + ":  ";
+                    return this.getRawName() + ":  ";
                 }
             }
             default -> {
                 Logger.getLogger("PlayerProfile").warning("Title style argument isn't in range! Please check PlayerProfile/config.yml !");
                 if (presentTitle != null) {
-                    return presentTitle.getColor() + "[" + presentTitle.getName() + "]" + ChatColor.RESET + "<" + this.getName() + "> ";
+                    return presentTitle.getColor() + "[" + presentTitle.getName() + "]" + ChatColor.RESET + "<" + this.getRawName() + "> ";
                 } else {
-                    return "<" + this.getName() + "> ";
+                    return "<" + this.getRawName() + "> ";
                 }
             }
         }

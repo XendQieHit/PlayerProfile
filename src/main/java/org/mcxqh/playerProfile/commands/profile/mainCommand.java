@@ -10,7 +10,6 @@ import org.jetbrains.annotations.NotNull;
 import org.mcxqh.playerProfile.Data;
 import org.mcxqh.playerProfile.commands.SubCommand;
 import org.mcxqh.playerProfile.commands.profile.subcommand.status;
-import org.mcxqh.playerProfile.players.Profile;
 
 import java.util.ArrayList;
 
