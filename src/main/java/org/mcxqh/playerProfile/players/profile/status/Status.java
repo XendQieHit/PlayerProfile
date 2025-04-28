@@ -15,7 +15,7 @@ import org.mcxqh.playerProfile.players.Profile;
 import java.io.File;
 import java.util.logging.Logger;
 
-public abstract class Status {
+public abstract class Status implements GUIPresentable{
     protected boolean isDisplay;
     protected boolean isDisplayCustomName;
     protected String customName;
@@ -35,14 +35,14 @@ public abstract class Status {
         this.profile = profile;
     }
 
-    public String getRawCustomStatus() {
+    public String getRawCustomName() {
         return customName;
     }
 
     @Override
     public String toString() {
         if (customName != null && !customName.isEmpty()) {
-            return color + "[" + getRawCustomStatus() + "]" + ChatColor.RESET;
+            return color + "[" + getRawCustomName() + "]" + ChatColor.RESET;
         }
         return "";
     }
@@ -118,7 +118,7 @@ public abstract class Status {
      * Return combined custom status.
      * @return String Composed of decorated symbol, ChatColor and raw custom status name
      * */
-    public String getName() {
+    public String getOriginalName() {
         return defaultColor + this.getClass().getSimpleName() + ChatColor.RESET;
     }
 

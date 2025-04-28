@@ -1,10 +1,13 @@
 package org.mcxqh.playerProfile.players.profile.status.instances;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.mcxqh.playerProfile.Data;
 import org.mcxqh.playerProfile.players.Profile;
 import org.mcxqh.playerProfile.players.profile.status.Status;
+
+import java.util.List;
 
 import static org.mcxqh.playerProfile.events.StatusListener.AFKPlayerListProfile;
 import static org.mcxqh.playerProfile.events.StatusListener.activePlayerListProfile;
@@ -12,6 +15,9 @@ import static org.mcxqh.playerProfile.events.StatusListener.activePlayerListProf
 public class Idle extends Status {
     private transient boolean isIdle;
     private transient int Idle_TIME;
+
+    public static final Material MATERIAL = Material.POTION;
+    public static final List<String> DESCRIPTION = List.of(ChatColor.YELLOW+"闲置");
 
     /**
      * This constructor is mostly used for loading player's status setting.
@@ -50,7 +56,7 @@ public class Idle extends Status {
      */
     @Override
     public boolean now() {
-        Profile profile = Data.profileMapWithUUID.get(player.getUniqueId());
+        Profile profile = Data.PROFILE_MAP_WITH_UUID.get(player.getUniqueId());
         AFK afk = profile.getStatusManager().getAFK();
         Idle idle = profile.getStatusManager().getIdle();
         // change active status
@@ -78,5 +84,15 @@ public class Idle extends Status {
             player.setPlayerListName(player.getName());
         }
         return true;
+    }
+
+    @Override
+    public Material getGUIMaterial() {
+        return MATERIAL;
+    }
+
+    @Override
+    public List<String> getDescription() {
+        return List.of();
     }
 }

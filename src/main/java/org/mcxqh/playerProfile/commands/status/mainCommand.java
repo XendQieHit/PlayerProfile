@@ -2,7 +2,6 @@ package org.mcxqh.playerProfile.commands.status;
 
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ComponentBuilder;
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -16,6 +15,7 @@ import org.mcxqh.playerProfile.commands.status.subcommand.custom;
 import org.mcxqh.playerProfile.commands.status.subcommand.list;
 import org.mcxqh.playerProfile.commands.status.subcommand.set;
 import org.mcxqh.playerProfile.commands.status.subcommand.toggle;
+import org.mcxqh.playerProfile.gui.GUI;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -58,8 +58,8 @@ public class mainCommand implements TabExecutor {
         Player player;
         if (args.length != 0) { // if args is not empty.
 
-            if (Data.playerMapWithName.containsKey(args[0])) { // if args contains player's name
-                player = Data.playerMapWithName.get(args[0]);
+            if (Data.PLAYER_MAP_WITH_NAME.containsKey(args[0])) { // if args contains player's name
+                player = Data.PLAYER_MAP_WITH_NAME.get(args[0]);
                 args = removeFirst(args);
             } else {
                 if (sender instanceof Player) {
@@ -78,14 +78,14 @@ public class mainCommand implements TabExecutor {
                     return subCommand.run(sender, player, args);
                 }
             }
-            return false;
+            return true;
 
         } else {
             if (sender instanceof Player) {
                 player = (Player) sender;
-                player.openInventory(Bukkit.createInventory(player, ))
+                GUI.STATUS.display(player, Data.GUI_META_MAP_FOR_PLAYER.get(player));
             }
-            return false;
+            return true;
         }
     }
 
@@ -107,8 +107,8 @@ public class mainCommand implements TabExecutor {
         Player player = (Player) sender;
         if (!args[0].isEmpty()) { // if args is not empty.
 
-            if (Data.playerMapWithName.containsKey(args[0])) { // if args contains player's name
-                player = Data.playerMapWithName.get(args[0]);
+            if (Data.PLAYER_MAP_WITH_NAME.containsKey(args[0])) { // if args contains player's name
+                player = Data.PLAYER_MAP_WITH_NAME.get(args[0]);
                 args = CommandUtils.removeFirst(args);
             }
 

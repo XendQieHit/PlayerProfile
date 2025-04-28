@@ -26,7 +26,7 @@ public abstract class Collective {
     protected UUID leader;
 
     public void add(Player player) {
-        add(Data.profileMapWithUUID.get(player.getUniqueId()));
+        add(Data.PROFILE_MAP_WITH_UUID.get(player.getUniqueId()));
     }
     public void add(Profile profile) {
         memberMap.put(profile.getUniqueId(), profile.getRawName());
@@ -34,7 +34,7 @@ public abstract class Collective {
     }
 
     public void addManager(Player player) {
-        addManager(Data.profileMapWithUUID.get(player.getUniqueId()));
+        addManager(Data.PROFILE_MAP_WITH_UUID.get(player.getUniqueId()));
     }
     public void addManager(Profile profile) {
         managerMap.put(profile.getUniqueId(), profile.getRawName());
@@ -42,7 +42,7 @@ public abstract class Collective {
     }
 
     public void removeManager(Player player) {
-        removeManager(Data.profileMapWithUUID.get(player.getUniqueId()));
+        removeManager(Data.PROFILE_MAP_WITH_UUID.get(player.getUniqueId()));
     }
     public void removeManager(Profile profile) {
         profile.getIdentityManager().removeIdentity(Identity.of(this.authLevel, profile.getUniqueId(), profile.getRawName(), this, IdentityLevel.MANAGER));
@@ -50,7 +50,7 @@ public abstract class Collective {
     }
 
     public void remove(Player player) {
-        remove(Data.profileMapWithUUID.get(player.getUniqueId()));
+        remove(Data.PROFILE_MAP_WITH_UUID.get(player.getUniqueId()));
     }
     public void remove(Profile profile) {
         UUID uuid = profile.getUniqueId();
@@ -83,7 +83,7 @@ public abstract class Collective {
      */
     public List<Profile> getAllMemberAsProfiles() {
         return Arrays.stream(memberMap.keySet().toArray())
-                .map(uuid -> Data.profileMapWithUUID.get(uuid))
+                .map(uuid -> Data.PROFILE_MAP_WITH_UUID.get(uuid))
                 .toList();
     }
 
@@ -93,7 +93,7 @@ public abstract class Collective {
      */
     public List<Player> getAllMemberAsPlayers() {
         return Arrays.stream(memberMap.values().toArray())
-                .map(uuid -> Data.playerMapWithUUID.get(uuid))
+                .map(uuid -> Data.PLAYER_MAP_WITH_UUID.get(uuid))
                 .toList();
     }
 

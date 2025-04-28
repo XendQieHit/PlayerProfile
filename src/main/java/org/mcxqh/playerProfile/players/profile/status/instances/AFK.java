@@ -3,11 +3,13 @@ package org.mcxqh.playerProfile.players.profile.status.instances;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.mcxqh.playerProfile.players.Profile;
 import org.mcxqh.playerProfile.players.profile.StatusManager;
 import org.mcxqh.playerProfile.players.profile.status.Status;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -17,6 +19,9 @@ import static org.mcxqh.playerProfile.events.StatusListener.activePlayerListProf
 public class AFK extends Status {
     private transient boolean isAFK;
     private transient int AFK_TIME;
+
+    public static final Material MATERIAL = Material.BLACK_BED;
+    public static final List<String> DESCRIPTION = List.of(ChatColor.YELLOW+"挂机");
 
     /**
      * This constructor is mostly used for generate new default status setting.
@@ -95,5 +100,15 @@ public class AFK extends Status {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public Material getGUIMaterial() {
+        return MATERIAL;
+    }
+
+    @Override
+    public List<String> getDescription() {
+        return DESCRIPTION;
     }
 }

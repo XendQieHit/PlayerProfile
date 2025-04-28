@@ -5,10 +5,7 @@ import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.mcxqh.playerProfile.commands.status.mainCommand;
-import org.mcxqh.playerProfile.events.PlayerChatListener;
-import org.mcxqh.playerProfile.events.PlayerJoinListener;
-import org.mcxqh.playerProfile.events.PlayerQuitListener;
-import org.mcxqh.playerProfile.events.StatusListener;
+import org.mcxqh.playerProfile.events.*;
 import org.mcxqh.playerProfile.players.Profile;
 
 import java.io.File;
@@ -17,22 +14,24 @@ import java.util.logging.Logger;
 public final class PlayerProfile extends JavaPlugin {
     /* Config Side */
     private final FileConfiguration pluginConfig = getConfig();
+    public static PlayerProfile instance;
     private final File dataFolder = getDataFolder();
     private final File configFile = new File(dataFolder,"config.yml");
 
 
     @Override
     public void onEnable() {
+        instance = this;
         // Initialize all player if existed.
         // But this section do not work as usual. I can not find the reason. Is there anyone could find?
         for (World world : getServer().getWorlds()) {
             if (!world.getPlayers().isEmpty()) {
-                world.getPlayers().forEach(player -> Data.playerMapWithUUID.put(player.getUniqueId(), player));
+                world.getPlayers().forEach(player -> Data.PLAYER_MAP_WITH_UUID.put(player.getUniqueId(), player));
             }
         }
-        if (!Data.playerMapWithUUID.isEmpty()) {
-            Data.playerMapWithUUID.forEach((uuid, player) -> {
-                Data.playerNameSet.add(player.getName());
+        if (!Data.PLAYER_MAP_WITH_UUID.isEmpty()) {
+            Data.PLAYER_MAP_WITH_UUID.forEach((uuid, player) -> {
+                Data.PLAYER_NAME_SET.add(player.getName());
                 PlayerJoinListener.EventJoinHandler(player);
             });
         }
@@ -61,10 +60,12 @@ public final class PlayerProfile extends JavaPlugin {
         }
 
         // Register EventListeners
-        getServer().getPluginManager().registerEvents(new StatusListener(), this);
-        getServer().getPluginManager().registerEvents(new PlayerJoinListener(), this);
-        getServer().getPluginManager().registerEvents(new PlayerQuitListener(), this);
-        getServer().getPluginManager().registerEvents(new PlayerChatListener(), this);
+        Bukkit.getPluginManager().registerEvents(new StatusListener(), this);
+        Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(), this);
+        Bukkit.getPluginManager().registerEvents(new PlayerQuitListener(), this);
+        Bukkit.getPluginManager().registerEvents(new PlayerChatListener(), this);
+        Bukkit.getPluginManager().registerEvents(new PlayerClickInventory(), this);
+
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, StatusListener::AFKDetector, 0L, 20L); // per 1 second
 
         // Register Commands
@@ -76,8 +77,8 @@ public final class PlayerProfile extends JavaPlugin {
     @Override
     public void onDisable() {
         // Plugin shutdown logic\
-        Data.playerMapWithUUID.forEach((uuid, player) -> {
-            Profile profile = Data.profileMapWithUUID.get(player.getUniqueId());
+        Data.PLAYER_MAP_WITH_UUID.forEach((uuid, player) -> {
+            Profile profile = Data.PROFILE_MAP_WITH_UUID.get(player.getUniqueId());
             profile.save();
         });
     }

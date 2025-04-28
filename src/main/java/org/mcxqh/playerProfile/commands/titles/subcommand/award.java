@@ -11,7 +11,6 @@ import org.mcxqh.playerProfile.Data;
 import org.mcxqh.playerProfile.Utils;
 import org.mcxqh.playerProfile.commands.CommandUtils;
 import org.mcxqh.playerProfile.commands.SubCommand;
-import org.mcxqh.playerProfile.commands.titles.mainCommand;
 import org.mcxqh.playerProfile.players.Profile;
 import org.mcxqh.playerProfile.players.profile.IdentityManager;
 import org.mcxqh.playerProfile.players.profile.identity.Identity;
@@ -40,7 +39,7 @@ public class award implements SubCommand {
                 || !CommandUtils.checkArgsWrong(sender, args, paramClasses)) return true;
 
         // TargetPlayer
-        Profile targetProfile = Data.profileMapWithName.get(args[0]);
+        Profile targetProfile = Data.PROFILE_MAP_WITH_NAME.get(args[0]);
         if (targetProfile == null) {
             sender.spigot().sendMessage(new ComponentBuilder("未找到玩家").color(ChatColor.YELLOW.asBungee()).create());
             return true;
@@ -56,7 +55,7 @@ public class award implements SubCommand {
     }
     // SubMethod
     private boolean handlePlayer(CommandSender sender, Player operaterPlayer, String[] args, Profile targetProfile) {
-        Profile operatorProfile = Data.profileMapWithUUID.get(operaterPlayer.getUniqueId());
+        Profile operatorProfile = Data.PROFILE_MAP_WITH_UUID.get(operaterPlayer.getUniqueId());
 
         if (operatorProfile.getUniqueId() == targetProfile.getUniqueId()){
             sender.spigot().sendMessage(new ComponentBuilder("想给自己一个称号？使用/title create").color(ChatColor.RED.asBungee()).create());
@@ -95,12 +94,12 @@ public class award implements SubCommand {
 
     @Override
     public List<String> tab(String[] args, Player player) {
-        Profile profile = Data.profileMapWithUUID.get(player.getUniqueId());
+        Profile profile = Data.PROFILE_MAP_WITH_UUID.get(player.getUniqueId());
         List<Identity> identities = profile.getIdentityManager().getIdentities().stream().toList();
 
         switch (args.length) {
             case 1 -> { // Player
-                return CommandUtils.pair(args[0], Data.playerMapWithName.keySet().stream().toList());
+                return CommandUtils.pair(args[0], Data.PLAYER_MAP_WITH_NAME.keySet().stream().toList());
             }
             case 3 -> { // Color
                 return CommandUtils.pair(args[2], Constants.CHAT_COLOR_STRING_LIST);

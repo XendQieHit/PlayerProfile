@@ -37,13 +37,13 @@ public class Profile {
         identityManager = new IdentityManager(player);
 
         // Register on Plugin
-        Data.profileMapWithUUID.put(uniqueId, this);
-        Data.profileMapWithName.put(name, this);
+        Data.PROFILE_MAP_WITH_UUID.put(uniqueId, this);
+        Data.PROFILE_MAP_WITH_NAME.put(name, this);
 
-        Data.playerMapWithName.put(name, player);
-        Data.playerMapWithUUID.put(player.getUniqueId(), player);
+        Data.PLAYER_MAP_WITH_NAME.put(name, player);
+        Data.PLAYER_MAP_WITH_UUID.put(player.getUniqueId(), player);
 
-        Data.playerNameSet.add(name);
+        Data.PLAYER_NAME_SET.add(name);
     }
 
     public void load() {

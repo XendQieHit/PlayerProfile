@@ -42,7 +42,7 @@ public class create implements SubCommand {
         return true;
     }
     private void handleWithPlayer(CommandSender sender, Player operatorPlayer, String[] args) {
-        Profile profile = Data.profileMapWithUUID.get(operatorPlayer.getUniqueId());
+        Profile profile = Data.PROFILE_MAP_WITH_UUID.get(operatorPlayer.getUniqueId());
 
         // Detect existed personal title issued by self.
         if (hasPersonalTitle(profile)) {

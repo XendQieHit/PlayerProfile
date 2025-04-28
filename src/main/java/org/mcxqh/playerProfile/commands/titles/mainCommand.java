@@ -53,8 +53,8 @@ public class mainCommand implements TabExecutor {
         Player player = null;
         if (args.length != 0) { // if args is not empty.
 
-            if (Data.playerMapWithName.containsKey(args[0])) { // if args contains player's name
-                player = Data.playerMapWithName.get(args[0]);
+            if (Data.PLAYER_MAP_WITH_NAME.containsKey(args[0])) { // if args contains player's name
+                player = Data.PLAYER_MAP_WITH_NAME.get(args[0]);
                 args = removeFirst(args);
             } else {
                 if (sender instanceof Player) {
@@ -63,7 +63,7 @@ public class mainCommand implements TabExecutor {
                     sender.spigot().sendMessage(new ComponentBuilder("/status <Player> custom|list|reload|set|toggle").color(ChatColor.YELLOW).create());
                     return true;
                 } else {
-                    player = Data.playerMapWithName.get(args[0]);
+                    player = Data.PLAYER_MAP_WITH_NAME.get(args[0]);
                 }
             }
 
@@ -109,8 +109,8 @@ public class mainCommand implements TabExecutor {
         Player player = (Player) sender;
         if (!args[0].isEmpty()) { // if args is not empty.
 
-            if (Data.playerMapWithName.containsKey(args[0])) { // if args contains player's name
-                player = Data.playerMapWithName.get(args[0]);
+            if (Data.PLAYER_MAP_WITH_NAME.containsKey(args[0])) { // if args contains player's name
+                player = Data.PLAYER_MAP_WITH_NAME.get(args[0]);
                 args = removeFirst(args);
             }
 

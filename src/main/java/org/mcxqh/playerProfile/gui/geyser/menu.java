@@ -1,17 +1,19 @@
 package org.mcxqh.playerProfile.gui.geyser;
 
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.geysermc.cumulus.form.SimpleForm;
 import org.geysermc.cumulus.util.FormImage;
 import org.mcxqh.playerProfile.Data;
+import org.mcxqh.playerProfile.gui.GUIMeta;
 import org.mcxqh.playerProfile.gui.GUITemplate;
 import org.mcxqh.playerProfile.players.Profile;
 
 public class menu implements GUITemplate {
 
     @Override
-    public void display(Player player) {
-        Profile profile = Data.profileMapWithUUID.get(player.getUniqueId());
+    public void display(Player player, GUIMeta guiMeta) {
+        Profile profile = Data.PROFILE_MAP_WITH_UUID.get(player.getUniqueId());
         SimpleForm.Builder builder = SimpleForm.builder()
                 .title("PlayerProfile玩家档案")
                 .content("你的名字：" + profile.getNameAsString())
@@ -29,5 +31,10 @@ public class menu implements GUITemplate {
                 .button("公会", FormImage.Type.PATH, "resource/gui/guild/loom_banner_dark_green.png")
                 .button("团队", FormImage.Type.PATH, "resource/gui/group/icon_multiplayer.png")
                 .button("档案管理", FormImage.Type.PATH, "resources/gui/profile/storageIconColor.png");
+    }
+
+    @Override
+    public void execute(InventoryClickEvent event, Player player, GUIMeta guiMeta) {
+
     }
 }

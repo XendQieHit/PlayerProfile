@@ -7,7 +7,6 @@ import org.bukkit.entity.Player;
 import org.mcxqh.playerProfile.Data;
 import org.mcxqh.playerProfile.commands.CommandUtils;
 import org.mcxqh.playerProfile.commands.SubCommand;
-import org.mcxqh.playerProfile.commands.titles.mainCommand;
 import org.mcxqh.playerProfile.players.profile.TitleManager;
 import org.mcxqh.playerProfile.players.profile.title.Title;
 
@@ -25,7 +24,7 @@ public class set implements SubCommand {
         ComponentBuilder componentBuilder = new ComponentBuilder("展示称号：/title set <称号>");
         if (!CommandUtils.checkArgsAbsence(sender, args, new String[]{"称号"}, componentBuilder.create())) return true;
 
-        TitleManager titleManager = Data.profileMapWithUUID.get(operatorPlayer.getUniqueId()).getTitleManager();
+        TitleManager titleManager = Data.PROFILE_MAP_WITH_UUID.get(operatorPlayer.getUniqueId()).getTitleManager();
         ArrayList<Title> titleArrayList = titleManager.getTitleArrayList();
         ArrayList<String> titleStringArrayList = titleManager.getTitleStringArrayList();
 
@@ -40,6 +39,6 @@ public class set implements SubCommand {
 
     @Override
     public List<String> tab(String[] args, Player player) {
-        return CommandUtils.pair(args[0], Data.profileMapWithUUID.get(player.getUniqueId()).getIdentityManager().getIdentitiesAsStringList());
+        return CommandUtils.pair(args[0], Data.PROFILE_MAP_WITH_UUID.get(player.getUniqueId()).getIdentityManager().getIdentitiesAsStringList());
     }
 }

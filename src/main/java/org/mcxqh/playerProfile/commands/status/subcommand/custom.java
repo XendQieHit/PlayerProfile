@@ -17,7 +17,7 @@ public class custom implements SubCommand {
 
     @Override
     public List<String> tab(String[] args, Player player) {
-        Profile profile = Data.profileMapWithUUID.get(player.getUniqueId());
+        Profile profile = Data.PROFILE_MAP_WITH_UUID.get(player.getUniqueId());
         StatusManager statusManager = profile.getStatusManager();
         return args.length == 1 ? CommandUtils.pair(args[0], statusManager.getAllSubStatusNames()) : List.of();
     }
@@ -46,7 +46,7 @@ public class custom implements SubCommand {
         if (!CommandUtils.checkArgs(sender, args, paramNamesBiList, paramClassesBiList, cb.create())) return true;
 
 
-        Profile profile = Data.profileMapWithUUID.get(operatorPlayer.getUniqueId());
+        Profile profile = Data.PROFILE_MAP_WITH_UUID.get(operatorPlayer.getUniqueId());
         StatusManager statusManager = profile.getStatusManager();
 
         for (Status status : statusManager.getStatuses()) {

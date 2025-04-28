@@ -11,6 +11,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.mcxqh.playerProfile.Data;
 import org.mcxqh.playerProfile.files.FileHandler;
+import org.mcxqh.playerProfile.gui.GUIMeta;
 import org.mcxqh.playerProfile.players.Profile;
 
 import java.util.ConcurrentModificationException;
@@ -44,8 +45,9 @@ public class PlayerJoinListener implements Listener {
         // put player into statusListener pool
         try {
             StatusListener.getActivePlayerList().add(profile);
-            Data.playerMapWithUUID.put(player.getUniqueId(), player);
-            Data.playerNameSet.add(player.getName());
+            Data.PLAYER_MAP_WITH_UUID.put(player.getUniqueId(), player);
+            Data.PLAYER_NAME_SET.add(player.getName());
+            Data.GUI_META_MAP_FOR_PLAYER.put(player, new GUIMeta(0, null, null, null));
 
             Logger.getLogger("PlayerProfile").info("Add " + player.getName() + " successfully!");
         } catch (ConcurrentModificationException e) {

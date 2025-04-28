@@ -66,7 +66,7 @@ public class FileHandler {
 
     public void createStatus(Player player) throws IOException {
         Logger.getLogger("PlayerProfile").info("444");
-        createStatus(Data.profileMapWithUUID.get(player.getUniqueId()));
+        createStatus(Data.PROFILE_MAP_WITH_UUID.get(player.getUniqueId()));
     }
 
     /**

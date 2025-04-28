@@ -21,7 +21,7 @@ public class set implements SubCommand {
      */
     @Override
     public boolean run(CommandSender sender, Player operatorPlayer, String[] args) {
-        Profile profile = Data.profileMapWithUUID.get(operatorPlayer.getUniqueId());
+        Profile profile = Data.PROFILE_MAP_WITH_UUID.get(operatorPlayer.getUniqueId());
         StatusManager statusManager = profile.getStatusManager();
 
         Logger.getLogger("PlayerProfile").info(args.toString());
@@ -38,7 +38,7 @@ public class set implements SubCommand {
 
     @Override
     public List<String> tab(String[] args, Player player) {
-        Profile profile = Data.profileMapWithUUID.get(player.getUniqueId());
+        Profile profile = Data.PROFILE_MAP_WITH_UUID.get(player.getUniqueId());
         StatusManager statusManager = profile.getStatusManager();
         return args.length == 1 ? CommandUtils.pair(args[0], statusManager.getAllSubStatusNames()) : List.of();
     }

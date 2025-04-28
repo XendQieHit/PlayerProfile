@@ -20,7 +20,7 @@ import java.util.*;
 
 public class StatusListener implements Listener {
     private final FileConfiguration config = YamlConfiguration.loadConfiguration(new File(new File("plugins/PlayerProfile"),"config.yml"));
-    private final Map<UUID, Profile> profileMapWithUUID = Data.profileMapWithUUID;
+    private final Map<UUID, Profile> profileMapWithUUID = Data.PROFILE_MAP_WITH_UUID;
     public static final ArrayList<Profile> activePlayerListProfile = new ArrayList<>();
     public static final ArrayList<Profile> AFKPlayerListProfile = new ArrayList<>();
     public static ArrayList<Profile> getActivePlayerList() {
@@ -47,7 +47,7 @@ public class StatusListener implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     public void disableAFK(PlayerMoveEvent event) {
         Player player = event.getPlayer();
-        Profile profile = Data.profileMapWithUUID.get(player.getUniqueId());
+        Profile profile = Data.PROFILE_MAP_WITH_UUID.get(player.getUniqueId());
         StatusManager statusManager = profile.getStatusManager();
         AFK afk = statusManager.getAFK();
         Idle idle = statusManager.getIdle();

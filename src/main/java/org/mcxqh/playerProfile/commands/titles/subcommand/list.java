@@ -15,7 +15,7 @@ public class list implements SubCommand {
     public boolean run(CommandSender sender, Player operatorPlayer, String[] args) {
         ComponentBuilder componentBuilder = new ComponentBuilder("已拥有的称号：").color(ChatColor.YELLOW);
 
-        for (Title title : Data.profileMapWithUUID.get(operatorPlayer.getUniqueId()).getTitleManager().getTitleArrayList())
+        for (Title title : Data.PROFILE_MAP_WITH_UUID.get(operatorPlayer.getUniqueId()).getTitleManager().getTitleArrayList())
             componentBuilder.append("\n").append(title.toBaseComponent());
 
         sender.spigot().sendMessage(componentBuilder.create());

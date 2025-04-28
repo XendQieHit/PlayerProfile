@@ -19,7 +19,7 @@ import java.util.UUID;
 
 public class PlayerChatListener implements Listener {
     private FileConfiguration config = YamlConfiguration.loadConfiguration(new File(new File("plugins/PlayerProfile"),"config.yml"));
-    private final Map<UUID, Profile> profileMapWithUUID = Data.profileMapWithUUID;
+    private final Map<UUID, Profile> profileMapWithUUID = Data.PROFILE_MAP_WITH_UUID;
     @EventHandler(priority = EventPriority.NORMAL)
     public void EventChatListener(AsyncPlayerChatEvent event) {
         Player player = event.getPlayer();

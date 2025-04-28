@@ -19,7 +19,7 @@ public class toggle implements SubCommand {
 
     @Override
     public List<String> tab(String[] args, Player player) {
-        Profile profile = Data.profileMapWithUUID.get(player.getUniqueId());
+        Profile profile = Data.PROFILE_MAP_WITH_UUID.get(player.getUniqueId());
         StatusManager statusManager = profile.getStatusManager();
 
         if (args.length == 1) {
@@ -44,7 +44,7 @@ public class toggle implements SubCommand {
             return true;
         }
 
-        Profile profile = Data.profileMapWithUUID.get(operatorPlayer.getUniqueId());
+        Profile profile = Data.PROFILE_MAP_WITH_UUID.get(operatorPlayer.getUniqueId());
         StatusManager statusManager = profile.getStatusManager();
 
         for (Status status : statusManager.getStatuses()) {

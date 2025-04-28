@@ -17,7 +17,7 @@ import java.util.List;
 public class list implements SubCommand {
 
     public boolean run(CommandSender sender, Player operatorPlayer, String[] args) {
-        Profile profile = Data.profileMapWithUUID.get(operatorPlayer.getUniqueId());
+        Profile profile = Data.PROFILE_MAP_WITH_UUID.get(operatorPlayer.getUniqueId());
         StatusManager statusManager = profile.getStatusManager();
 
         // 加载状态
@@ -47,7 +47,7 @@ public class list implements SubCommand {
         ComponentBuilder componentBuilder = new ComponentBuilder();
 
         // 状态
-        componentBuilder.append(status.getName() + "    ");
+        componentBuilder.append(status.getOriginalName() + "    ");
 
         // 显示
         if (status.isDisplayCustomName()) {

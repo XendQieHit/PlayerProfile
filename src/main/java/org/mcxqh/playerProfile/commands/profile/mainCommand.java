@@ -35,8 +35,8 @@ public class mainCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         Player player;
-        if (Data.playerMapWithName.containsKey(args[0])) { // if args contains player's name
-            player = Data.playerMapWithName.get(args[0]);
+        if (Data.PLAYER_MAP_WITH_NAME.containsKey(args[0])) { // if args contains player's name
+            player = Data.PLAYER_MAP_WITH_NAME.get(args[0]);
         } else {
             if (sender instanceof Player) {
                 player = (Player) sender;

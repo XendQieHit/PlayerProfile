@@ -14,7 +14,9 @@ import org.mcxqh.playerProfile.players.profile.status.instances.Idle;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 public class StatusManager {
@@ -22,6 +24,7 @@ public class StatusManager {
     private Idle idle;
     private final Player player;
     private final ArrayList<Status> statusArrayList = new ArrayList<>();
+    private final Map<String, Status> statusMapWithString = new HashMap<>();
     private Status presentStatus;
 
     private final ArrayList<Class<? extends Status>> statusClassArrayList = new ArrayList<>();
@@ -37,7 +40,14 @@ public class StatusManager {
         this.statusArrayList.add(afk);
         this.statusArrayList.add(idle);
 
+        for (Status status : statusArrayList)
+            statusMapWithString.put(status.getClass().getSimpleName(), status);
+
         this.presentStatus = idle;
+    }
+
+    public Status getStatusWithString(String s) {
+        return statusMapWithString.get(s);
     }
 
     public AFK getAFK() {
@@ -73,7 +83,7 @@ public class StatusManager {
     public List<String> getAllSubStatusNames() {
         List<String> list = new ArrayList<>(this.getStatuses().size());
         for (Status status : this.getStatuses()) {
-            list.add(status.getClass().getSimpleName().toLowerCase());
+            list.add(status.getClass().getSimpleName());
         }
         return list;
     }
@@ -125,7 +135,7 @@ public class StatusManager {
     private void showDetail() {
         ComponentBuilder componentBuilder = new ComponentBuilder("Status List:");
         statusArrayList.forEach(status -> {
-            componentBuilder.append("\n" + status.getName() + "    " + status.getColor().name() + "    " + status.toString());
+            componentBuilder.append("\n" + status.getOriginalName() + "    " + status.getColor().name() + "    " + status.toString());
         });
         this.player.spigot().sendMessage(componentBuilder.create());
     }

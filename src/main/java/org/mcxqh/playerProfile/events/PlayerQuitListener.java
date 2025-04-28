@@ -16,11 +16,11 @@ public class PlayerQuitListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void EventQuitListener(PlayerQuitEvent event) {
         Player player = event.getPlayer();
-        Profile profile = Data.profileMapWithUUID.get(player.getUniqueId());
+        Profile profile = Data.PROFILE_MAP_WITH_UUID.get(player.getUniqueId());
         World world = player.getWorld();
 
         // Remove from all playerLists
-        Data.profileMapWithUUID.remove(player.getUniqueId());
+        Data.PROFILE_MAP_WITH_UUID.remove(player.getUniqueId());
         if (profile.getStatusManager().getAFK().isAFK()) {
             StatusListener.getAFKPlayerList().remove(profile);
         } else {
