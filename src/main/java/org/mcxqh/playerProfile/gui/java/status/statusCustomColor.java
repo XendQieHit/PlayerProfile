@@ -7,9 +7,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
-import org.jetbrains.annotations.NotNull;
 import org.mcxqh.playerProfile.Constants;
-import org.mcxqh.playerProfile.Data;
 import org.mcxqh.playerProfile.gui.GUI;
 import org.mcxqh.playerProfile.gui.GUIMeta;
 import org.mcxqh.playerProfile.gui.GUIPanel;
@@ -18,6 +16,7 @@ import org.mcxqh.playerProfile.gui.java.GUIComponentLib;
 import org.mcxqh.playerProfile.players.profile.status.Status;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 public class statusCustomColor implements GUITemplate {
 
@@ -51,15 +50,20 @@ public class statusCustomColor implements GUITemplate {
     public void execute(InventoryClickEvent event, Player player, GUIMeta guiMeta) {
         if (event.getSlot() == 26) {
             GUI.STATUS_DETAIL.display(player, guiMeta);
-        } else if (event.getSlot() > 15) {
-            Material targetMaterial = guiMeta.getItemStack().getType();
+        } else if (event.getSlot() < 16) {
+            Material targetMaterial = event.getCurrentItem().getType();
             Material[] materials = Constants.CHAT_COLOR_MATERIALS_ARRAY;
             for (int i = 0; i < materials.length; i++) {
-                if (targetMaterial == materials[i])
+                Logger.getLogger("PlayerProfile").info(targetMaterial.name() + " | " + materials[i].name());
+                if (targetMaterial == materials[i]) {
                     // 但这里很有可能更改的对象是声明的而不是引用的，还需要事件调试看看
-                    ((Status) guiMeta.getAddition()).setColor(ChatColor.values()[i]);
+                    Status status = (Status) guiMeta.getAddition();
+                    status.setColor(ChatColor.values()[i]);
+                    Logger.getLogger("PlayerProfile").info(ChatColor.values()[i].name() + " | " + status);
+                    player.spigot().sendMessage(new ComponentBuilder(ChatColor.YELLOW + "设置成功!").create());
+                    break;
+                }
             }
-            player.spigot().sendMessage(new ComponentBuilder(ChatColor.YELLOW + "设置成功!").create());
             GUI.STATUS_DETAIL.display(player, guiMeta);
         }
     }

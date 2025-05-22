@@ -12,6 +12,7 @@ import org.mcxqh.playerProfile.players.profile.title.Title;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class set implements SubCommand {
 
@@ -39,6 +40,10 @@ public class set implements SubCommand {
 
     @Override
     public List<String> tab(String[] args, Player player) {
-        return CommandUtils.pair(args[0], Data.PROFILE_MAP_WITH_UUID.get(player.getUniqueId()).getIdentityManager().getIdentitiesAsStringList());
+        List<String> identitiesAsStringList = Data.PROFILE_MAP_WITH_UUID.get(player.getUniqueId())
+                .getIdentityManager()
+                .getIdentitiesAsStringList();
+        Logger.getLogger("PlayerProfile").info(identitiesAsStringList.toString());
+        return CommandUtils.pair(args[0], identitiesAsStringList);
     }
 }

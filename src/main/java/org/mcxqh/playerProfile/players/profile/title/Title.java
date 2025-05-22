@@ -18,9 +18,9 @@ public class Title {
     private final String description;
     private final Identity issuerIdentity;
 
-    public Title(String name, ChatColor color, String description, Identity issuerIdentity) {
+    public Title(String name, String description, Identity issuerIdentity) {
         this.name = name;
-        this.color = color;
+        this.color = issuerIdentity.getAuthLevel().getColor();
         this.description = description;
         this.issuerIdentity = issuerIdentity;
     }
@@ -41,13 +41,21 @@ public class Title {
         return issuerIdentity;
     }
 
+    public String toSimpleString() {
+        AuthLevel authLevel = issuerIdentity.getAuthLevel();
+        if (authLevel == AuthLevel.PERSONAL || authLevel == AuthLevel.SERVER) {
+            return String.format("%s.%s", authLevel, name);
+        }
+        return String.format("%s.%s.%s", authLevel, name, issuerIdentity.getCollective().getName());
+    }
+
     @Override
     public String toString() {
         AuthLevel authLevel = issuerIdentity.getAuthLevel();
         if (authLevel == AuthLevel.PERSONAL || authLevel == AuthLevel.SERVER) {
-            return authLevel + name;
+            return String.format("%s[%s]%s", color, authLevel, name);
         }
-        return authLevel + name + issuerIdentity.getIdentityLevel();
+        return String.format("%s[%s]%s", color, issuerIdentity.getCollective().getName(), name);
     }
 
     public BaseComponent toBaseComponent() {

@@ -7,10 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.mcxqh.playerProfile.Data;
-import org.mcxqh.playerProfile.gui.GUI;
-import org.mcxqh.playerProfile.gui.GUIMeta;
-import org.mcxqh.playerProfile.gui.GUIPanel;
-import org.mcxqh.playerProfile.gui.GUITemplate;
+import org.mcxqh.playerProfile.gui.*;
 import org.mcxqh.playerProfile.players.Profile;
 
 import java.util.List;
@@ -73,7 +70,7 @@ public class menu implements GUITemplate {
 
             }
             case 23 -> { // Title
-
+                GUI.TITLE.display(player, guiMeta);
             }
             case 30 -> { // Guild
 

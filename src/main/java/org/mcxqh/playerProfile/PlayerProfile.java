@@ -1,5 +1,8 @@
 package org.mcxqh.playerProfile;
 
+import com.comphenix.protocol.ProtocolLib;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -17,7 +20,7 @@ public final class PlayerProfile extends JavaPlugin {
     public static PlayerProfile instance;
     private final File dataFolder = getDataFolder();
     private final File configFile = new File(dataFolder,"config.yml");
-
+    public static ProtocolManager protocolManager;
 
     @Override
     public void onEnable() {
@@ -35,6 +38,9 @@ public final class PlayerProfile extends JavaPlugin {
                 PlayerJoinListener.EventJoinHandler(player);
             });
         }
+
+        // Initialize ProtocolLib
+        protocolManager = ProtocolLibrary.getProtocolManager();
 
         // Load config
         if (!configFile.exists()) {

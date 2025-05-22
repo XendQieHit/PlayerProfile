@@ -278,7 +278,6 @@ public class FileHandler {
 
             Title title = new Title(
                     "testTitle",
-                    org.bukkit.ChatColor.DARK_AQUA,
                     "This is a testing title!\nhi!",
                     new Identity(AuthLevel.PERSONAL, player.getUniqueId(), player.getName(), null, null)
             );

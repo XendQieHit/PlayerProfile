@@ -8,7 +8,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.mcxqh.playerProfile.Constants;
-import org.mcxqh.playerProfile.Data;
 import org.mcxqh.playerProfile.gui.GUI;
 import org.mcxqh.playerProfile.gui.GUIMeta;
 import org.mcxqh.playerProfile.gui.GUIPanel;
@@ -31,12 +30,12 @@ public class statusDetail implements GUITemplate {
         Status status = (Status) guiMeta.getAddition();
         Inventory inventory = Bukkit.createInventory(null, 54, itemName);
 
+        // PlaceHolder
+        GUIComponentLib.placeHolderFrame(inventory);
+
         // StatusInfo
         List<String> statusInfoLore = genInfoLore(status);
         inventory.setItem(4, GUIComponentLib.createItemStack(statusItem.getType(), itemName, statusInfoLore));
-
-        // PlaceHolder
-        GUIComponentLib.placeHolderFrame(inventory);
 
         // ToggleButton
         if (status.isDisplay()) {
@@ -93,7 +92,10 @@ public class statusDetail implements GUITemplate {
                 }
                 display(player, guiMeta);
             }
-            case 43 -> GUI.TEST.display(player, guiMeta);
+            case 43 -> {
+                guiMeta.setPageIndex(1);
+                GUI.TEST.display(player, guiMeta);
+            }
             case 49 -> GUI.STATUS_LIST.display(player, guiMeta); // Return
         }
     }

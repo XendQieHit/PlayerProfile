@@ -72,20 +72,20 @@ public class award implements SubCommand {
             Identity identity = identityManager.getIdentities().stream().toList().get(i); // get the identity issuer chosen
             // Verify Operator's Identity
             if (identity.verify()) {
-                targetProfile.getTitleManager().addTitle(new Title(args[1], Utils.valueOfChatColor(args[2]), args[3], identity));
+                targetProfile.getTitleManager().addTitle(new Title(args[1], args[3], identity));
                 sender.spigot().sendMessage(new ComponentBuilder("称号颁发成功").color(ChatColor.YELLOW.asBungee()).create());
             } else {
                 sender.spigot().sendMessage(new ComponentBuilder("身份验证失败").color(ChatColor.RED.asBungee()).create());
             }
             return true;
         } else { // Select Identity Automatically
-            targetProfile.getTitleManager().addTitle(new Title(args[1], Utils.valueOfChatColor(args[2]), args[3], Identity.of(AuthLevel.PERSONAL, operaterPlayer.getUniqueId(), operaterPlayer.getName(), null, null)));
+            targetProfile.getTitleManager().addTitle(new Title(args[1], args[3], Identity.of(AuthLevel.PERSONAL, operaterPlayer.getUniqueId(), operaterPlayer.getName(), null, null)));
         }
         return false;
     }
     private void handleNotPlayer(CommandSender sender, String[] args, Profile targetProfile) {
         if (sender instanceof ConsoleCommandSender) {
-            targetProfile.getTitleManager().addTitle(new Title(args[1], Utils.valueOfChatColor(args[2]), args[3], Identity.of(AuthLevel.SERVER, null, null, null, null)));
+            targetProfile.getTitleManager().addTitle(new Title(args[1], args[3], Identity.of(AuthLevel.SERVER, null, null, null, null)));
             sender.spigot().sendMessage(new ComponentBuilder("称号颁发成功").color(ChatColor.YELLOW.asBungee()).create());
         } else {
             sender.spigot().sendMessage(new ComponentBuilder("Only player or console can award new one.").color(ChatColor.RED.asBungee()).create());
@@ -105,7 +105,7 @@ public class award implements SubCommand {
                 return CommandUtils.pair(args[2], Constants.CHAT_COLOR_STRING_LIST);
             }
             case 5 -> { // IssuerClass
-                return CommandUtils.pair(args[4], identities.stream().map(Identity::toString).toList());
+                return CommandUtils.pair(args[4], identities.stream().map(Identity::toStringSimple).toList());
             }
         }
         return List.of();

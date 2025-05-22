@@ -68,7 +68,10 @@ public class TitleManager {
         Gson gson = new Gson();
         jsonArray.forEach(jsonElement -> {
             try {
-                titleArrayList.add(gson.fromJson(jsonElement, Title.class));
+                Title title = gson.fromJson(jsonElement, Title.class);
+                Logger.getLogger("PlayerProfile").info(title.toString());
+                titleArrayList.add(title);
+                titleStringArrayList.add(title.toString());
             } catch (NullPointerException e) {
                 player.spigot().sendMessage(new ComponentBuilder("加载称号失败：" + e).color(net.md_5.bungee.api.ChatColor.RED).create());
                 throw new RuntimeException(e);

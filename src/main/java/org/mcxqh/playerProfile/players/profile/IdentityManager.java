@@ -42,7 +42,7 @@ public class IdentityManager {
      */
     public List<String> getIdentitiesAsStringList() {
         return identities.stream()
-                .map(Identity::toString)
+                .map(Identity::toStringSimple)
                 .toList();
     }
 }

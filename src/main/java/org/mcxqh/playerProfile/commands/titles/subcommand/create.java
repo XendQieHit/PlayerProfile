@@ -22,14 +22,14 @@ import java.util.UUID;
 public class create implements SubCommand {
 
     /**
-     * @param args [Name] [Color] [Description]
+     * @param args [Name] [Description]
      */
     @Override
     public boolean run(CommandSender sender, Player operatorPlayer, String[] args) {
         // Primary check args
-        String[] paramNames = new String[]{"称号名", "颜色", "简介"};
+        String[] paramNames = new String[]{"称号名", "简介"};
         Class<?>[] paramClasses = new Class[]{String.class, org.bukkit.ChatColor.class, String.class};
-        ComponentBuilder componentBuilder = new ComponentBuilder("给自己创建称号：/title create <称号名> <颜色> <简介>");
+        ComponentBuilder componentBuilder = new ComponentBuilder("给自己创建称号：/title create <称号名> <简介>");
         if (!CommandUtils.checkArgsAbsence(sender, args, paramNames, componentBuilder.create())
                 || !CommandUtils.checkArgsWrong(sender, args, paramClasses)) return true;
 
@@ -49,7 +49,7 @@ public class create implements SubCommand {
             sender.spigot().sendMessage(new ComponentBuilder("有一个就够了，快端下去罢（").color(ChatColor.YELLOW).create());
         } else {
             // Create Personal Title
-            profile.getTitleManager().addTitle(new Title(args[0], Utils.valueOfChatColor(args[1]), args[2], Identity.of(AuthLevel.PERSONAL, profile.getUniqueId(), profile.getRawName(), null, null)));
+            profile.getTitleManager().addTitle(new Title(args[0], args[2], Identity.of(AuthLevel.PERSONAL, profile.getUniqueId(), profile.getRawName(), null, null)));
         }
     }
     private boolean hasPersonalTitle(Profile profile) {

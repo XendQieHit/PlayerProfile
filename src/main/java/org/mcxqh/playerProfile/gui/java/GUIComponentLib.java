@@ -2,15 +2,22 @@ package org.mcxqh.playerProfile.gui.java;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.entity.Item;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
+import org.mcxqh.playerProfile.gui.GUI;
+import org.mcxqh.playerProfile.gui.GUIMeta;
+import org.mcxqh.playerProfile.gui.GUITemplate;
 import org.mcxqh.playerProfile.players.Profile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.logging.Logger;
 
 public class GUIComponentLib {
     public static void addComponent(Inventory inventory, int index, Material material, String name, List<String> lore) {
@@ -31,6 +38,13 @@ public class GUIComponentLib {
         ItemStack itemStack = new ItemStack(material);
         ItemMeta itemMeta = itemStack.getItemMeta();
         itemMeta.setItemName(name);
+        itemStack.setItemMeta(itemMeta);
+        return itemStack;
+    }
+
+    public static ItemStack enchantEffect(ItemStack itemStack) {
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        itemMeta.setEnchantmentGlintOverride(true);
         itemStack.setItemMeta(itemMeta);
         return itemStack;
     }
@@ -64,15 +78,15 @@ public class GUIComponentLib {
     }
 
     public static ItemStack Return() {
-        return createItemStackWithoutLore(Material.RED_WOOL, ChatColor.WHITE + "上一级菜单");
+        return createItemStackWithoutLore(Material.RED_WOOL, ChatColor.RED + "上一级菜单");
     }
 
     public static ItemStack next() {
-        return createItemStackWithoutLore(Material.ARROW, ChatColor.GRAY + "上一页");
+        return createItemStackWithoutLore(Material.ARROW, ChatColor.GRAY + "下一页");
     }
 
     public static ItemStack back() {
-        return createItemStackWithoutLore(Material.ARROW, ChatColor.GRAY + "下一页");
+        return createItemStackWithoutLore(Material.ARROW, ChatColor.GRAY + "上一页");
     }
 
     public static ItemStack exit() {
@@ -90,5 +104,37 @@ public class GUIComponentLib {
     }
     public static ItemStack disableWithName(String s) {
         return createItemStackWithoutLore(Material.RED_CONCRETE, ChatColor.RED + s);
+    }
+
+    public static void createListPanel(Inventory inventory, Material[] materials, String[] itemNames, List<List<String>> itemLore, int pageIndex) {
+        int length = materials.length;
+        // PlaceHolder
+        placeHolderFrame(inventory);
+        // Instances Filling
+        for (int i = 28 * (pageIndex - 1), j = 0; i < length && i < 28 * pageIndex; i++, j++) {
+            GUIComponentLib.addComponent(inventory, j + 10 + (j / 7) * 2, materials[i], itemNames[i], itemLore.get(i));
+        }
+        // Next
+        if (length > 28 && pageIndex * 28 < length) inventory.setItem(53, GUIComponentLib.next());
+        // Back
+        if (pageIndex > 1) inventory.setItem(45, GUIComponentLib.back());
+        // Return
+        inventory.setItem(49, Return());
+    }
+
+    public static void createListPanel(Inventory inventory, Material material, String[] itemNames, List<List<String>> itemLore, int pageIndex) {
+        int length = itemNames.length;
+        // PlaceHolder
+        placeHolderFrame(inventory);
+        // Instances Filling
+        for (int i = 28 * (pageIndex - 1), j = 0; i < length && i < 28 * pageIndex; i++, j++) {
+            GUIComponentLib.addComponent(inventory, j + 10 + (j / 7) * 2, material, itemNames[i], itemLore.get(i));
+        }
+        // Next
+        if (length > 28 && pageIndex * 28 < length) inventory.setItem(53, GUIComponentLib.next());
+        // Back
+        if (pageIndex > 1) inventory.setItem(45, GUIComponentLib.back());
+        // Return
+        inventory.setItem(49, Return());
     }
 }

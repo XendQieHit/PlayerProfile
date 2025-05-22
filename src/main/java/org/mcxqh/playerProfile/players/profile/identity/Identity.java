@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
+import org.bukkit.ChatColor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mcxqh.playerProfile.collectives.Collective;
@@ -69,6 +70,10 @@ public class Identity {
         return uuid;
     }
 
+    public String getOwnerName() {
+        return ownerName;
+    }
+
     public JsonObject toJson() {
         Gson gson = new Gson();
         return (JsonObject) gson.toJsonTree(this);
@@ -82,15 +87,26 @@ public class Identity {
     }
 
     /**
-     * Get String of Identities in the format of <code>%s.%s.%s</code>.
+     * Get String of Identity in the format of <code>[GroupName]OwnerName</code>
      * For example: <pre>{@code
      * Identity identity = new identity(AuthLevel.GROUP, exampleGroup, IdentityLevel.Manager));
      * String s = identity.toString();
      * }</pre>
+     * <code>s</code> will be converted into String of <code>"authLevel.getColor() + [ExampleGroup]OwnerName"</code>
+     */
+    public String toString() {
+        return authLevel.getColor() + "[" + authLevel + "]" + ownerName;
+    }
+
+    /**
+     * Get String of Identity in the format of <code>%s.%s.%s</code>.
+     * For example: <pre>{@code
+     * Identity identity = new identity(AuthLevel.GROUP, exampleGroup, IdentityLevel.Manager));
+     * String s = identity.toStringSimple();
+     * }</pre>
      * <code>s</code> will be converted into String of <code>"Group.ExampleGroup.Manager"</code>
      */
-    @Override
-    public String toString() {
+    public String toStringSimple() {
         return String.format("%s.%s.%s", collective.getClass().getSimpleName(), getCollective().getName(), level);
     }
 
