@@ -29,13 +29,18 @@ public class titleAward implements GUITemplate {
     public void display(Player player, GUIMeta guiMeta) {
         guiMeta.setGuiPanel(GUIPanel.TITLE_AWARD);
         Inventory inventory = Bukkit.createInventory(null, 54, "颁发称号");
+
+        // Load Draft
+        if (guiMeta.getAddition().getClass() != ArrayList.class) {
+            guiMeta.setAddition(new ArrayList<>());
+        }
+        ArrayList<?> draft = (ArrayList<?>) guiMeta.getAddition();
         /*
            0 -> Identity,
            1 -> Name,
            2 -> Description
            3 -> TargetPlayerProfile
         */
-        ArrayList<?> draft = (ArrayList<?>) guiMeta.getAddition();
         String titleName = draft.get(1).toString();
 
         // PlaceHolders
@@ -45,7 +50,6 @@ public class titleAward implements GUITemplate {
         inventory.setItem(45, GUIComponentLib.Return());
 
         // Preview
-
         if (draft.isEmpty()) {
             inventory.setItem(4, GUIComponentLib.createItemStack(
                     Material.NAME_TAG,

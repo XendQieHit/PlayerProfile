@@ -1,41 +1,46 @@
 package org.mcxqh.playerProfile.gui;
 
 public enum GUIPanel {
-    TEST(null),
+    // Common
+    TEST(PanelType.COMMON),
 
     // Profile
-    MENU_PROFILE(null),
+    MENU_PROFILE(PanelType.COMMON),
 
     // Status
-    STATUS_CUSTOM_NAME(null),
-    STATUS_CUSTOM_COLOR(null),
-    STATUS_DETAIL(new GUIPanel[]{STATUS_CUSTOM_COLOR, STATUS_CUSTOM_NAME}),
-    STATUS_LIST(new GUIPanel[]{STATUS_DETAIL}),
-    MENU_STATUS(new GUIPanel[]{STATUS_LIST}),
+    STATUS_CUSTOM_NAME(PanelType.ANVIL),
+    STATUS_CUSTOM_COLOR(PanelType.COMMON),
+    STATUS_DETAIL(PanelType.COMMON),
+    STATUS_LIST(PanelType.LIST),
+    MENU_STATUS(PanelType.COMMON),
 
     // Guild
-    MENU_GUILD(null),
+    MENU_GUILD(PanelType.COMMON),
 
     // Team
-    MENU_TEAM(null),
+    MENU_TEAM(PanelType.COMMON),
 
     // Group
-    MENU_GROUP(null),
+    MENU_GROUP(PanelType.COMMON),
 
     // Title
-    TITLE_AWARD_IDENTITY(null),
-    TITLE_AWARD_COLOR(null),
-    TITLE_AWARD_NAME(null),
-    TITLE_AWARD(new GUIPanel[]{TITLE_AWARD_NAME, TITLE_AWARD_COLOR, TITLE_AWARD_IDENTITY}),
-    TITLE_DETAIL(null),
-    TITLE_LIST(new GUIPanel[]{TITLE_DETAIL}),
-    MENU_TITLE(new GUIPanel[]{TITLE_LIST, TITLE_AWARD}),
+    TITLE_AWARD_IDENTITY(PanelType.COMMON),
+    TITLE_AWARD_COLOR(PanelType.COMMON),
+    TITLE_AWARD_NAME(PanelType.ANVIL),
+    TITLE_AWARD(PanelType.COMMON),
+    TITLE_DETAIL(PanelType.COMMON),
+    TITLE_LIST(PanelType.LIST),
+    MENU_TITLE(PanelType.COMMON),
 
-    MENU(new GUIPanel[]{MENU_GROUP, MENU_GUILD, MENU_PROFILE, MENU_TITLE, MENU_STATUS, MENU_TEAM});
+    MENU(PanelType.COMMON);
 
 
-    public final GUIPanel[] subPanel;
-    GUIPanel(GUIPanel[] subPanel) {
-        this.subPanel = subPanel;
+    public final PanelType panelType;
+    GUIPanel(PanelType panelType) {
+        this.panelType = panelType;
+    }
+
+    public enum PanelType {
+        COMMON, LIST, ANVIL;
     }
 }

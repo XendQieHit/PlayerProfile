@@ -23,36 +23,31 @@ import org.bukkit.inventory.view.builder.InventoryViewBuilder;
 import org.bukkit.util.Vector;
 import org.mcxqh.playerProfile.PlayerProfile;
 import org.mcxqh.playerProfile.gui.*;
+import org.mcxqh.playerProfile.gui.java.GUIAnvil;
 import org.mcxqh.playerProfile.gui.java.GUIComponentLib;
 import org.mcxqh.playerProfile.players.profile.status.Status;
 
 import java.util.ArrayList;
+import java.util.function.Function;
 import java.util.logging.Logger;
 
-public class statusCustomName implements GUITemplate {
+public class statusCustomName extends GUIAnvil {
 
     @Override
-    public void display(Player player, GUIMeta guiMeta) {
-        Logger.getLogger("PlayerProfile").info("test AnvilView...");
+    public void onDisplay(Player player, GUIMeta guiMeta) {
         guiMeta.setGuiPanel(GUIPanel.STATUS_CUSTOM_NAME);
+    }
 
-
+    @Override
+    public void onRename(Player player, GUIMeta guiMeta, String string) {
+        Logger.getLogger("PlayerProfile").info("Renamed: " + string);
+        player.spigot().sendMessage(new ComponentBuilder(ChatColor.YELLOW + "设置成功!").create());
+        Status status = (Status) guiMeta.getAddition();
+        status.setCustomName(string);
     }
 
     @Override
     public void execute(InventoryClickEvent event, Player player, GUIMeta guiMeta) {
-        if (event.getSlot() == 2) {
-
-            if (event.getView().getType() == InventoryType.ANVIL) {
-                Logger.getLogger("PlayerProfile").info("is anvil");
-                if (event.getView() instanceof AnvilView view) {
-                    Logger.getLogger("PlayerProfile").info("is anvilView");
-                    String renameText = view.getRenameText();
-                    ((Status) guiMeta.getAddition()).setCustomName(renameText);
-                    GUI.STATUS_DETAIL.display(player, guiMeta);
-                    player.spigot().sendMessage(new ComponentBuilder(ChatColor.YELLOW + "设置成功!").create());
-                }
-            }
-        }
+        GUI.STATUS_DETAIL.display(player, guiMeta);
     }
 }

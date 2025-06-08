@@ -1,25 +1,34 @@
 package org.mcxqh.playerProfile.gui.java;
 
+import jdk.jfr.Experimental;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
-import org.mcxqh.playerProfile.gui.GUI;
-import org.mcxqh.playerProfile.gui.GUIMeta;
-import org.mcxqh.playerProfile.gui.GUITemplate;
+import org.jetbrains.annotations.Nullable;
 import org.mcxqh.playerProfile.players.Profile;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
-import java.util.logging.Logger;
 
 public class GUIComponentLib {
+    /* 流式操作创建物品，尽情期待 */
+    @Experimental
+    public class ItemStackBuilder {
+        private Material material;
+        private ItemStack previewItemStack;
+
+        public ItemStackBuilder(Material material) {
+            this.material = material;
+        }
+
+        public ItemStack build() {
+            return this.previewItemStack;
+        }
+    }
+
     public static void addComponent(Inventory inventory, int index, Material material, String name, List<String> lore) {
         ItemStack itemStack = createItemStack(material, name, lore);
         inventory.setItem(index, itemStack);
@@ -106,7 +115,12 @@ public class GUIComponentLib {
         return createItemStackWithoutLore(Material.RED_CONCRETE, ChatColor.RED + s);
     }
 
-    public static void createListPanel(Inventory inventory, Material[] materials, String[] itemNames, List<List<String>> itemLore, int pageIndex) {
+    /**
+     * Create list GUI with provided parameters.
+     * @param pageIndex This will be used for add turn-page buttons.
+     * @param indexesOfHighlightItem These item at this indexes will be set the effect of enchanted. Look like highlighted.
+     */
+    public static void createListPanel(Inventory inventory, Material[] materials, String[] itemNames, List<List<String>> itemLore, int pageIndex, int @Nullable [] indexesOfHighlightItem) {
         int length = materials.length;
         // PlaceHolder
         placeHolderFrame(inventory);
@@ -120,9 +134,17 @@ public class GUIComponentLib {
         if (pageIndex > 1) inventory.setItem(45, GUIComponentLib.back());
         // Return
         inventory.setItem(49, Return());
+
+        // Highlight
+        if (indexesOfHighlightItem != null) {
+            for (int i : indexesOfHighlightItem) {
+                int indexInInventory = i + 10 + (i / 7) * 2;
+                inventory.setItem(indexInInventory, enchantEffect(inventory.getItem(indexInInventory)));
+            }
+        }
     }
 
-    public static void createListPanel(Inventory inventory, Material material, String[] itemNames, List<List<String>> itemLore, int pageIndex) {
+    public static void createListPanel(Inventory inventory, Material material, String[] itemNames, List<List<String>> itemLore, int pageIndex, int @Nullable [] indexesOfHighlightItem) {
         int length = itemNames.length;
         // PlaceHolder
         placeHolderFrame(inventory);
@@ -136,5 +158,13 @@ public class GUIComponentLib {
         if (pageIndex > 1) inventory.setItem(45, GUIComponentLib.back());
         // Return
         inventory.setItem(49, Return());
+
+        // Highlight
+        if (indexesOfHighlightItem != null) {
+            for (int i : indexesOfHighlightItem) {
+                int indexInInventory = i + 10 + (i / 7) * 2;
+                inventory.setItem(indexInInventory, enchantEffect(inventory.getItem(indexInInventory)));
+            }
+        }
     }
 }

@@ -1,14 +1,19 @@
 package org.mcxqh.playerProfile;
 
+import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLib;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
+import com.comphenix.protocol.events.PacketAdapter;
+import com.comphenix.protocol.events.PacketEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.mcxqh.playerProfile.commands.status.mainCommand;
 import org.mcxqh.playerProfile.events.*;
+import org.mcxqh.playerProfile.gui.GUIPanel;
 import org.mcxqh.playerProfile.players.Profile;
 
 import java.io.File;
@@ -39,8 +44,6 @@ public final class PlayerProfile extends JavaPlugin {
             });
         }
 
-        // Initialize ProtocolLib
-        protocolManager = ProtocolLibrary.getProtocolManager();
 
         // Load config
         if (!configFile.exists()) {
@@ -64,6 +67,22 @@ public final class PlayerProfile extends JavaPlugin {
             Logger.getLogger("PlayerProfile").info("Enable Player: " + pluginConfig.getBoolean("title.toggle-enable"));
 
         }
+        // Register PacketListeners
+        protocolManager = ProtocolLibrary.getProtocolManager();
+        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(
+                PlayerProfile.instance,
+                PacketType.Play.Client.CLOSE_WINDOW
+        ) {
+            @Override
+            public void onPacketReceiving(PacketEvent event) {
+                if (Data.GUI_META_MAP_FOR_PLAYER.get(event.getPlayer()).getGuiPanel() == null) return;
+                Player player = event.getPlayer();
+                if (Data.GUI_META_MAP_FOR_PLAYER.get(player).getGuiPanel().panelType != GUIPanel.PanelType.ANVIL) {
+                    Logger.getLogger("PlayerProfile").info(player.getDisplayName() + " Quited.");
+                    Data.GUI_META_MAP_FOR_PLAYER.get(player).setGuiPanel(null);
+                }
+            }
+        });
 
         // Register EventListeners
         Bukkit.getPluginManager().registerEvents(new StatusListener(), this);

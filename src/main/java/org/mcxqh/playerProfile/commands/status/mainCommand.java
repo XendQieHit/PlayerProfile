@@ -1,7 +1,12 @@
 package org.mcxqh.playerProfile.commands.status;
 
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.events.PacketAdapter;
+import com.comphenix.protocol.events.PacketEvent;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ComponentBuilder;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -9,13 +14,16 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mcxqh.playerProfile.Data;
+import org.mcxqh.playerProfile.PlayerProfile;
 import org.mcxqh.playerProfile.commands.CommandUtils;
 import org.mcxqh.playerProfile.commands.SubCommand;
 import org.mcxqh.playerProfile.commands.status.subcommand.custom;
 import org.mcxqh.playerProfile.commands.status.subcommand.list;
 import org.mcxqh.playerProfile.commands.status.subcommand.set;
 import org.mcxqh.playerProfile.commands.status.subcommand.toggle;
+import org.mcxqh.playerProfile.events.PlayerClickInventory;
 import org.mcxqh.playerProfile.gui.GUI;
+import org.mcxqh.playerProfile.gui.GUIPanel;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -81,7 +89,7 @@ public class mainCommand implements TabExecutor {
             return true;
 
         } else {
-            if (sender instanceof Player) {
+            if (sender instanceof Player) { // Open GUI
                 player = (Player) sender;
                 GUI.STATUS.display(player, Data.GUI_META_MAP_FOR_PLAYER.get(player));
             }
