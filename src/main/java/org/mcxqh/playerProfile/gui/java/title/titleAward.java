@@ -32,9 +32,9 @@ public class titleAward implements GUITemplate {
 
         // Load Draft
         if (guiMeta.getAddition().getClass() != ArrayList.class) {
-            guiMeta.setAddition(new ArrayList<>());
+            guiMeta.setAddition(new ArrayList<Object>());
         }
-        ArrayList<?> draft = (ArrayList<?>) guiMeta.getAddition();
+        ArrayList<Object> draft = (ArrayList<Object>) guiMeta.getAddition();
         /*
            0 -> Identity,
            1 -> Name,
@@ -116,14 +116,16 @@ public class titleAward implements GUITemplate {
                 GUI.TITLE.display(player, guiMeta);
             }
             case 49 -> { // Submit
-                ArrayList<Object> draft = (ArrayList<Object>) guiMeta.getAddition();
+                ArrayList<?> draft = (ArrayList<?>) guiMeta.getAddition();
 
+                // Identity
                 if (!(draft.get(0) instanceof Identity identity)) {
                     player.spigot().sendMessage(new ComponentBuilder(ChatColor.RED + "未选择身份！").create());
                     GUI.TITLE_AWARD.display(player, guiMeta);
                     return;
                 }
 
+                // Name
                 Object nameObj = draft.get(1);
                 if (!(nameObj instanceof String) || ((String) nameObj).isEmpty()) {
                     player.spigot().sendMessage(new ComponentBuilder(ChatColor.RED + "未填写称号名称！").create());
@@ -132,13 +134,13 @@ public class titleAward implements GUITemplate {
                 }
                 String titleName = (String) nameObj;
 
+                // Description
                 Object descObj = draft.get(2);
                 if (!(descObj instanceof List<?> descList) || descList.isEmpty()) {
                     player.spigot().sendMessage(new ComponentBuilder(ChatColor.RED + "未填写简介！").create());
                     GUI.TITLE_AWARD.display(player, guiMeta);
                     return;
                 }
-
                 StringBuilder builder = new StringBuilder();
                 for (Object item : descList) {
                     if (!(item instanceof String)) {
@@ -150,6 +152,7 @@ public class titleAward implements GUITemplate {
                 }
                 String description = builder.toString();
 
+                // Player
                 Object profileObj = draft.get(3);
                 if (!(profileObj instanceof PlayerProfile playerProfile)) {
                     player.spigot().sendMessage(new ComponentBuilder(ChatColor.RED + "未选择玩家！").create());
@@ -164,6 +167,7 @@ public class titleAward implements GUITemplate {
                     return;
                 }
 
+                // Done!
                 profile.getTitleManager().addTitle(new Title(titleName, description, identity));
                 GUI.TITLE.display(player, guiMeta);
             }

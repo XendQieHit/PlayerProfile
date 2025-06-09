@@ -43,7 +43,7 @@ public class statusList extends GUIList {
                 .limit(28L * pageIndex)
                 .map(GUIPresentable::getDescription)
                 .toList();
-        GUIComponentLib.createListPanel(inventory, materials, itemNames, itemLore, pageIndex);
+        GUIComponentLib.createListPanel(inventory, materials, itemNames, itemLore, pageIndex, null);
         player.openInventory(inventory);
     }
 

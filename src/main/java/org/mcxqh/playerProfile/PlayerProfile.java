@@ -69,20 +69,7 @@ public final class PlayerProfile extends JavaPlugin {
         }
         // Register PacketListeners
         protocolManager = ProtocolLibrary.getProtocolManager();
-        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(
-                PlayerProfile.instance,
-                PacketType.Play.Client.CLOSE_WINDOW
-        ) {
-            @Override
-            public void onPacketReceiving(PacketEvent event) {
-                if (Data.GUI_META_MAP_FOR_PLAYER.get(event.getPlayer()).getGuiPanel() == null) return;
-                Player player = event.getPlayer();
-                if (Data.GUI_META_MAP_FOR_PLAYER.get(player).getGuiPanel().panelType != GUIPanel.PanelType.ANVIL) {
-                    Logger.getLogger("PlayerProfile").info(player.getDisplayName() + " Quited.");
-                    Data.GUI_META_MAP_FOR_PLAYER.get(player).setGuiPanel(null);
-                }
-            }
-        });
+        ProtocolLibrary.getProtocolManager().addPacketListener(new PlayerCloseWindow());
 
         // Register EventListeners
         Bukkit.getPluginManager().registerEvents(new StatusListener(), this);

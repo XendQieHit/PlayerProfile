@@ -27,7 +27,7 @@ public class PlayerClickInventory implements Listener {
 
     private static void guiPanelDetermine(InventoryClickEvent event, GUIMeta guiMeta, Player player) {
         Logger.getLogger("PlayerProfile").info(player.getDisplayName());
-        GUI.GUI_EXECUTE_MAP_WITH_GUI_PANEL.get(guiMeta.getGuiPanel()).execute(event, player, guiMeta);
+        guiMeta.getGuiPanel().instance.execute(event, player, guiMeta);
         event.setCancelled(true);
     }
 }

@@ -1,11 +1,11 @@
-package org.mcxqh.playerProfile.gui.java.title;
+package org.mcxqh.playerProfile.gui.java.guild;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.mcxqh.playerProfile.gui.GUIMeta;
 import org.mcxqh.playerProfile.gui.GUITemplate;
 
-public class titleAwardColor implements GUITemplate {
+public class guild implements GUITemplate {
     @Override
     public void display(Player player, GUIMeta guiMeta) {
 

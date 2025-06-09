@@ -28,7 +28,7 @@ public abstract class GUIAnvil implements GUITemplate {
 
     @Override
     public void display(Player player, GUIMeta guiMeta) {
-        GUITemplate latestGUI = GUI.GUI_EXECUTE_MAP_WITH_GUI_PANEL.get(guiMeta.getGuiPanel());
+        GUITemplate latestGUI = guiMeta.getGuiPanel().instance;
         onDisplay(player, guiMeta);
 
         // Thing will append when player submit string of renamed item

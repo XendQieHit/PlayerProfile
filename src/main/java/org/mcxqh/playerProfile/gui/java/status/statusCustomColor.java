@@ -48,9 +48,7 @@ public class statusCustomColor implements GUITemplate {
 
     @Override
     public void execute(InventoryClickEvent event, Player player, GUIMeta guiMeta) {
-        if (event.getSlot() == 26) {
-            GUI.STATUS_DETAIL.display(player, guiMeta);
-        } else if (event.getSlot() < 16) {
+        if (event.getSlot() < 16) {
             Material targetMaterial = event.getCurrentItem().getType();
             Material[] materials = Constants.CHAT_COLOR_MATERIALS_ARRAY;
             for (int i = 0; i < materials.length; i++) {
@@ -64,7 +62,7 @@ public class statusCustomColor implements GUITemplate {
                     break;
                 }
             }
-            GUI.STATUS_DETAIL.display(player, guiMeta);
         }
+        GUI.STATUS_DETAIL.display(player, guiMeta);
     }
 }

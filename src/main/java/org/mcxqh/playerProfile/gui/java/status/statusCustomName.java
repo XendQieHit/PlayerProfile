@@ -41,13 +41,13 @@ public class statusCustomName extends GUIAnvil {
     @Override
     public void onRename(Player player, GUIMeta guiMeta, String string) {
         Logger.getLogger("PlayerProfile").info("Renamed: " + string);
-        player.spigot().sendMessage(new ComponentBuilder(ChatColor.YELLOW + "设置成功!").create());
         Status status = (Status) guiMeta.getAddition();
         status.setCustomName(string);
     }
 
     @Override
     public void execute(InventoryClickEvent event, Player player, GUIMeta guiMeta) {
+        player.spigot().sendMessage(new ComponentBuilder(ChatColor.YELLOW + "设置成功!").create());
         GUI.STATUS_DETAIL.display(player, guiMeta);
     }
 }
